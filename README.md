@@ -1,2 +1,1 @@
-# Networking
-Network studies
+# IT Studies
