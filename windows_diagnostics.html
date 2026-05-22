@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network CLI Cheatsheet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080d1a; --surface:#0d1220; --surface2:#0d1220; --border:#1c2330;
+    --text:#cdd9e5; --muted:#566573;
+    --forti:#ff6b35; --unifi:#3d9be9; --huawei:#e8003d;
+    --windows:#6abf69; --putty:#d4a843; --cisco:#1ba8ff;
+    --t-interface:#64d8cb; --t-routing:#f4c542; --t-dns:#a78bfa;
+    --t-arp:#fb923c; --t-conn:#34d399; --t-vpn:#f472b6;
+    --t-capture:#60a5fa; --t-firewall:#fbbf24; --t-session:#e879f9; --t-ssh:#d4a843;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.5;padding:0 0 60px;min-width:900px;}
+
+
+  #topbar{position:static;background:rgba(8,13,26,0.97);border-bottom:1px solid var(--border);padding:8px 20px 6px;}
+  .tb-row1{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:6px;min-height:36px;position:relative;}
+  .tb-title h1{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;color:#e6edf3;line-height:1;white-space:nowrap;letter-spacing:0.05em;}
+  .tb-title .h1-accent{color:#38bdf8;font-style:normal;}
+  .tb-title .sub{font-size:0.7rem;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:3px;}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;}
+  .pill{font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;border:1px solid;cursor:pointer;text-decoration:none;transition:opacity 0.15s,background 0.15s,color 0.15s,border-color 0.15s;white-space:nowrap;}
+  .pill:hover{opacity:0.7;}
+  .pill.active{background:rgba(255,255,255,0.1);opacity:1;}
+  .pills.has-active .pill:not(.active){opacity:0.2;color:#444 !important;border-color:#333 !important;}
+  .col.col-hidden{display:none;}
+  .tb-row2{display:flex;justify-content:center;padding:5px 0;}
+  #search-wrap{position:relative;flex:1;max-width:480px;}
+  #search{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:6px 32px 6px 10px;width:100%;outline:none;transition:border-color 0.2s;}
+  #search::placeholder{color:var(--muted);}
+  #search:focus{border-color:#3d6491;}
+  #search-icon{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;pointer-events:none;}
+  #search-count{font-size:0.72rem;color:var(--muted);white-space:nowrap;}
+  .tb-row3{display:flex;gap:4px 5px;flex-wrap:wrap;align-items:center;justify-content:center;padding:5px 0;}
+  .jump-label{font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-right:8px;white-space:nowrap;}
+  .jump{font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 9px;border-radius:3px;border:1px solid var(--border);color:#8b949e;background:transparent;text-decoration:none;transition:border-color 0.15s,color 0.15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+  .jump:hover{border-color:#3d6491;color:var(--text);}
+  .jump.active{background:rgba(255,255,255,0.07);color:#fff;border-color:#3d6491;}
+  .jdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;}
+
+  #legend{display:flex;flex-wrap:wrap;gap:5px 12px;align-items:center;margin:12px 20px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .legend-title{font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-right:4px;}
+  .leg{display:flex;align-items:center;gap:5px;font-size:0.62rem;color:#8b949e;}
+  .leg-sq{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+  #grid-wrap{padding:0 20px;}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px 20px 40px;}
+
+  .col{background:#0b1120;border:1px solid rgba(255,255,255,0.06);border-radius:8px;scroll-margin-top:120px;}
+  .col-head{position:sticky;top:0;z-index:10;padding:9px 11px;display:flex;align-items:center;gap:7px;border-bottom:2px solid;border-radius:7px 7px 0 0;}
+  .col-head .ico{font-size:1rem;line-height:1;}
+  .col-head .name{font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
+
+  .cisco   .col-head{border-color:var(--cisco);  background:#080d1a;}
+  .forti   .col-head{border-color:var(--forti);  background:#080d1a;}
+  .unifi   .col-head{border-color:var(--unifi);  background:#080d1a;}
+  .huawei  .col-head{border-color:var(--huawei); background:#080d1a;}
+  .windows .col-head{border-color:var(--windows);background:#080d1a;}
+  .putty   .col-head{border-color:var(--putty);  background:#120d03;}
+
+  .cisco   .name{color:var(--cisco);}
+  .forti   .name{color:var(--forti);}
+  .unifi   .name{color:var(--unifi);}
+  .huawei  .name{color:var(--huawei);}
+  .windows .name{color:var(--windows);}
+  .putty   .name{color:var(--putty);}
+
+  .sec{border-bottom:1px solid var(--border);}
+  .sec:last-child{border-bottom:none;}
+  .sec-label{padding:5px 9px 3px;font-size:0.63rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:#0d1e30;}
+  .sec-label-left{display:flex;align-items:center;gap:5px;}
+  .sec-label-left::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:0.85;}
+  .sec-toggle{font-size:0.72rem;opacity:0.4;transition:transform 0.2s;flex-shrink:0;}
+  .sec.collapsed .sec-toggle{transform:rotate(-90deg);opacity:0.25;}
+  .sec.collapsed .cmds{display:none;}
+
+  .t-interface{color:var(--t-interface);background:transparent;}
+  .t-routing{color:var(--t-routing);background:transparent;}
+  .t-dns{color:var(--t-dns);background:transparent;}
+  .t-arp{color:var(--t-arp);background:transparent;}
+  .t-conn{color:var(--t-conn);background:transparent;}
+  .t-vpn{color:var(--t-vpn);background:transparent;}
+  .t-capture{color:var(--t-capture);background:transparent;}
+  .t-firewall{color:var(--t-firewall);background:transparent;}
+  .t-session{color:var(--t-session);background:transparent;}
+  .t-ssh{color:var(--t-ssh);background:transparent;}
+
+  .cmds{list-style:none;padding:2px 0 6px;}
+  .cmds li{padding:3px 9px 3px 11px;border-left:2px solid transparent;transition:background 0.1s;cursor:pointer;display:flex;flex-direction:row;align-items:center;gap:6px;}
+  .cmds li:hover{background:rgba(255,255,255,0.03);}
+  /* text block takes all available space */
+  .li-text{flex:1;min-width:0;}
+  /* row that holds description + star side by side */
+  .d-row{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .t-interface .cmds li{border-color:rgba(100,216,203,0.18);}
+  .t-routing   .cmds li{border-color:rgba(244,197,66,0.18);}
+  .t-dns       .cmds li{border-color:rgba(167,139,250,0.18);}
+  .t-arp       .cmds li{border-color:rgba(251,146,60,0.18);}
+  .t-conn      .cmds li{border-color:rgba(52,211,153,0.18);}
+  .t-vpn       .cmds li{border-color:rgba(244,114,182,0.18);}
+  .t-capture   .cmds li{border-color:rgba(96,165,250,0.18);}
+  .t-firewall  .cmds li{border-color:rgba(251,191,36,0.18);}
+  .t-session   .cmds li{border-color:rgba(232,121,249,0.18);}
+  .t-ssh       .cmds li{border-color:rgba(212,168,67,0.18);}
+
+  /* .d = description label — white on top */
+  .d{display:block;font-size:0.85rem;color:#ffffff;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0.04em;}
+  /* .c = actual command — grey below */
+  .c{display:block;color:#4ade80;font-size:0.8rem;word-break:break-all;margin-top:2px;}
+  .cmds li:hover .d::after{content:' 📋';font-size:0.7rem;opacity:0.35;}
+  .cmds li.copied{background:rgba(52,211,153,0.1)!important;}
+  .cmds li.copied .c{color:#34d399;}
+
+  .badge{display:inline-block;font-size:0.62rem;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:0.04em;padding:2px 6px;border-radius:2px;margin-left:4px;vertical-align:middle;position:relative;top:-1px;}
+  .badge-ps {background:rgba(61,155,233,0.2);color:#3d9be9;border:1px solid rgba(61,155,233,0.3);}
+  .badge-cmd{background:rgba(106,191,105,0.15);color:#6abf69;border:1px solid rgba(106,191,105,0.25);}
+
+  .cmds li.hidden{display:none;}
+  .sec.all-hidden{display:none;}
+  .col.no-match{opacity:0.2;}
+  mark{background:rgba(244,197,66,0.3);color:#f4c542;border-radius:2px;padding:0 1px;}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);background:#34d399;color:#080b0f;font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;padding:7px 18px;border-radius:4px;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;z-index:1000;white-space:nowrap;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer{text-align:center;margin-top:30px;color:#1e2a35;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;}
+
+  /* ══ STAR / FAVOURITE ══ */
+  .star {
+    font-size: 1rem;
+    opacity: 0.18;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+    line-height: 1;
+  }
+  .cmds li:hover .star { opacity: 0.6; transform: scale(1.15); }
+  .star.starred { opacity: 1; filter: drop-shadow(0 0 6px #39ff14); color: #39ff14; }
+  .fav-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(212,168,67,0.5);
+    color: #d4a843;
+    background: rgba(212,168,67,0.08);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .fav-btn:hover { border-color: gold; color: gold; }
+  .fav-btn.active { border-color: gold; color: gold; background: rgba(255,215,0,0.08); }
+
+  /* ══ RECENTLY COPIED TRAY ══ */
+  #recent-tray {
+    display: none;
+    margin: 0 20px 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  #recent-tray.visible { display: block; }
+  .recent-header {
+    font-family:'Orbitron',sans-serif;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .recent-clear {
+    font-size: 0.55rem;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family:'Orbitron',sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .recent-clear:hover { color: #e87070; }
+  #recent-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .recent-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #dce8f0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .recent-item:hover { border-color: #3d6491; background: #111e2e; }
+
+  /* ══ COMMAND BUILDER PANEL ══ */
+  #builder-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 500;
+    backdrop-filter: blur(2px);
+  }
+  #builder-overlay.visible { display: flex; align-items: center; justify-content: center; }
+  #builder-panel {
+    width: 100%;
+    max-width: 720px;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px 28px;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .builder-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .builder-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .builder-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .builder-close:hover { color: #fff; }
+  .builder-desc {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .builder-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .builder-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .builder-field label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .builder-field input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .builder-field input:focus { border-color: #3d6491; }
+  .builder-field input::placeholder { color: var(--muted); }
+  /* terminal output */
+  .builder-terminal {
+    background: #080d1a;
+    border: 1px solid #1c2c3a;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #34d399;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+  }
+  .builder-terminal .prompt { color: #566573; flex-shrink: 0; }
+  .builder-terminal .cmd-out { word-break: break-all; flex: 1; }
+  .builder-terminal .placeholder-part { color: #566573; }
+  .builder-actions { display: flex; gap: 10px; }
+  .builder-copy-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    background: #34d399;
+    color: #080b0f;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .builder-copy-btn:hover { background: #2ebc88; }
+  .builder-cancel-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .builder-cancel-btn:hover { border-color: #fff; color: #fff; }
+
+  @media print{
+    body{background:#fff;color:#000;font-size:8px;min-width:unset;padding:0;}
+    body::before{display:none;}
+    #topbar{position:static;background:#fff;border-bottom:2px solid #000;padding:8px 12px;}
+    #search-wrap,.pills,.tb-row2,.tb-row3,#toast{display:none!important;}
+    .tb-title h1{font-size:1.1rem;color:#000;}
+    .tb-title h1 em{-webkit-text-fill-color:#000;background:none;color:#000;}
+    #legend{border:1px solid #ccc;background:#f9f9f9;margin:6px 0;}
+    .leg{color:#333;} .legend-title{color:#666;}
+    #grid-wrap{padding:0;}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px 20px 40px;}
+    .col{border:1px solid #ccc;border-radius:3px;break-inside:avoid;}
+    .col-head{position:static;background:#f0f0f0!important;border-bottom:1px solid #ccc;}
+    .col-head .name{color:#000!important;}
+    .sec-label{background:#f9f9f9!important;color:#333!important;}
+    .sec-toggle{display:none;}
+    .cmds li{border-left:2px solid #ddd;padding:2px 5px 2px 7px;}
+    .c{color:#000;font-size:0.62rem;} .d{color:#666;font-size:0.55rem;}
+    .badge-ps{background:#dde8f5;color:#2255aa;border-color:#aac;}
+    .badge-cmd{background:#ddf0dd;color:#225522;border-color:#aca;}
+    footer{color:#999;}
+  }
+
+  .site-footer { margin-top: 4rem; border-top: 1px solid rgba(56,189,248,0.15); background: #060b14; }
+  .footer-inner { max-width: 1400px; margin: 0 auto; padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-brand { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; letter-spacing: 3px; text-decoration: none; }
+  .footer-brand span { color: #38bdf8; }
+  .footer-links { display: flex; align-items: center; gap: 1.5rem; }
+  .footer-links a { display: flex; align-items: center; gap: 8px; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #64748b; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: #38bdf8; }
+  .footer-links svg { width: 18px; height: 18px; fill: currentColor; }
+  .footer-copy { font-size: 12px; color: #334155; letter-spacing: 0.5px; }
+
+  .brand-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+  }
+  .brand-sub, .lew-brand-sub {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    margin-top: 2px !important;
+    display: block !important;
+  }
+</style>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAK60lEQVR4nJVXaXBcV5X+zn1b761dbW2xvMqSrUSxSEyoitRUbJw4KCZJi0xiqACFU7iyFEXMTICZ7ibD1CypKcwwQzkQV8AxBj2cQCDBDF4kSOLEjjeili1blhftakndT72+fsudH5KIAcsw599779zvfPc75557HuGvGidwIKSCTZZ3U0V7O1eJrOs9ujgXYt2gvji4GoINIr4Y2obvv1NSlE1m+JLmpZbOi8Uw5wyR+a8RIBoBwgCiEfA5IOIgQAWuD8q2/ah3GXMqyju/4wOdRPqfBwp1cWEy1k0VTXGuxkI81ARSYxFexBzCwWfu0x/c12/kySnTX1cgLH56/2O3MI97hanrDYzhY7IoNjLFsdpMJAdkWYwVVbisQoGfsph1jsh5+nttpUOLobUd5aI8M15y6KElkxwAdRy4+uVCVj+WSXPbJYu+qeHJVGmJszw1pc3UrFv5HAetmhkef335nc3PTvQPXNXTiedS45kv61xYscxr3CZQxmTVK+91uOVK2Sm05kx5dV4vJAo2u5hKpk9ahfwF29KvVa1YU5kYG41LhdniAnPnfNubz0JVQVte6n2YTJ2bBuUMWyxoo9qgg1Ip59BUlt9+2xrRtpsPPnvbntt3/u7+Uy+/+35Vi1sqb1zaQYLw9fJVdf8hO71H3vhs7dmFHW56/L9rHS0f2Zgh566clvNIDhm2bU8qbkdFdiq+R8zN/Ly4ujipu6vOH/zCqjgBQMdL/fc4va4mtbN216aXTpVDLv4nl2S+WlkkQuLso8mc0WiY8JocLiNnNOmWPWZDvCbCWprL6L/PzCTPKaWBT4iyBDfTz+TGRn46Ojzb4qsM7BMcfsA2kZkahbusYtZbXvKGefzNZw/veWqUA6BP/vhSpSMzYWR0v7eyWvmEadq1Wh6b/MXOlFvkmm3CKph8NpvKThUKRq9LEX4/+cFo8tC/bdQ2b96lOO5u9Ezl7AZS3AFXkX+N7FE2aNeunXM4lVV5QxD0gjEti4IoOOUAN9BKTPqWUhjfK5ZU59/Y0Zyg+3f31vnzp5Meebk3xVlg35c2nCLCosfob7Xtu9+XXnyi1Vh43vpybFtiPP15Y+jSttJlS1220zP9xo7mhOhFPOssWenTpni1blo2MfAw5ywCcAAU6QYDunFxtMU7Y6AkN5awuGx7JVkZPfxU9Qw4gEiEQn1NhFAIAKB2kvXiE60GOKeQGpOAPkvPMVn2ueFftvxOczZ+7M2v3JUAADY+Id5yeTBfO5LkPGOLlXOAABFxIrL74uDRYNBMQ9/KufkeuXhfzdrAGWep+7sA8TBAiEZtVe201E6y1M7rmhQRB5ostbPTsi0zbqazLkYFSfQ4SsLhMAMA5lu9PGi4ir5qGvpD3kq/CwCiN5A0lcmJs1cHw4mBi7uG+9MsnTR9f0sqJsu7CQDKKoqqlKKy1hnuvlvrFQajkQgHAKY4hGO2YQYtJj8tOeVFAXguW6c4xRVmJjHEzQIHN0cBoE/FTZtZOwBwTiTLNSIrxFMjk6ccrd42EHGEOWP1a6XeyuWV067yKgcUxQCANnQzzC/saW+30HjUU15dEWKK835HcWk9CRIZej4LAJOx7psS6AYAIm7DupDP84Docn1NywuNm/de8AEAczBNv3L6cspd5OJykefT67e/72qPtNsACDRXibA0Ehj3KRI/lpuePm7m0hC43QAA8743Ns6pvb3dvuNfL9QIknOL7HAU9KmJX7kUvJ0bGMkCEbD2K1dMgZlZJjKSBB6Y0lMLgBwg3qmCoX9rKjmZ6M5nc4NO2TwviqQLIq0EIHyT0RzZG1hIVVmUmE2ivbRQwF35xLQs+3x3wONSeqJBM9QXIRYMBk3JoaTSUwnk4lPDV38YzF8P0hiaE0GS5aVE1MlETzETrILgcNYtufdnGzgHEOY3JKDGQpxzm0QyUsw2U5LMeu1C9lXFtCYAQG2McMY5F8rqy0vsgg4BLABwQiTyR5DIfBYUp+h1+FyHR46fuCw76D2H3y+QIhUDQKhvkUKMkt2pquztr6w7S/lsXyahXfYsqbg1Zea8C+hiBOCWbQ7mNa01n5MaQl0nfdHOqAbOCUQ8MicvT6X0ITOdzjy0pUIbkF1vk5m9J3Hy2qm28FExhhhrCx+liqZ2Dsw1ovksktpJFggwLKMpp6WZSJ6feFzilfn4XIwS2Q/sjcUVv5ubJgLMFWgF50fCAEUB3qeqBAAS43GHSzk929JR4BfyroJpXs4NPTXac6OmMW/hcISiUfAnj4w0jA5r9aVrGh0Or+B//e+WToe6ugSVyBIBwOV1DebTIEF2CLX1pc+D6EiEcx4Fn5uFAHBupATSJ8feGim3S2o8srvE1/bdK5+RBSojsnyAoJl5a4TbeU0RxJ6Dz6zSx6o+KQDftGfT1hd5wbpSSCUlZ2l1bL5EAQAiAAiz2m6XR3pq8MylgNcvNawPv14aiWAG4Q8dbTs3Ioq28JypjO0S+c9tmc2KpP89MaHeX+Yaz6XNOmdljSgQx/jZ/rsAHLtn+3r7xSe4YFvWxtmJxE6lsqQlndeOAIAagg0ALHz0qPjKZ2/LFJX6DhWVe9nwudGippbmr0ejZLe1zzckAIoiDsG0Pf9Z7lo9kzMSrz8a+AdTm96aGY8/rD5U1fDBnp/Ujp46uzcd1/KSIBkAp04i65HXRr7POI+lbcmSios8hx9bPRgOc7YwuDJ0t9vgnCRTe37F2ppcMq4ZpoUdH3/hxMaeYNAEYgIACIqY5bJiSLJQ45d0veMHZ1pKKxRj9XJf3+P7YxvanvxUqWTpB2DphlLulQHiD+7+Q4NLRsfksfM7lzQEbuWc/xj407uGgLkJVu0k60u/GYpMz9jh4YEh844tH8mOXpj5WNcjS3pDXVyQHUO3Z9OzpWDmsGUrM5lkqtIyWZUgKg6Jo4jbogTR7VOcgsddgu/s76hOPv6Ly2dFy/ivwbjh81f6n35ta00N55zourGdFo5LmINee/Z/nXdtbvrltcFMUPa44SsWJq6+d761JxocXrzWb2j06GvDh2QYvS9/qv6ZTbvPfEvwlcR+/Ujt/j//Z/iwgcyf+/Xrd0st/7zlD33HL3sUr+ODklvKmscuTbe989XWS6Fwr6xCNTF/lSICCs8vH6s6Kezevt4kImz71eRvvT5l9ffu9tc/0NW/dnQgNnTiaw9OA5yAxQiAgLDN7l1z9aMYnojX3Vrz1rVzIz/LZjKj3prKoJ7Iv/Dbp2//9YJiHwLNqRclsjfvetfnDpQdECThzLnjw//y6DrgMKsIGHn5coV7qfEnw8pfEpizTXs+qO2/6okvq0jft2x5yc6Mlj2HyYlv6F7/P8bjmXeEdE7tiQbz4JzCmAsMAMH/ef/jvvLinaIs7zvwQO0rL+w7Wpa6gGQ0GjRvmqsbvp1PBwD22IEL/27YoHXi2LcPXbRLuUX1Tiv37m++ce8YALQ+31PrcLsedvmdZTKz9775uebz9790qlHLydd6nlybRjjMEI0uemX/JYH54AsnAwA6XrkYJMIOCPKP1ni0t06fuOSXb1m5zGbKo2Z69gQk8cTB4ld7v6Pf6RgoXaH3jxRqkw558vhnVs3ebPeLK3AdmRDAVCL7vr1XnhRgVBjjY/vrAjyh5fxew+cpX6f1nc4jL2nOaiVXWzX7w2B9/qaY/y8C13st1G6oS9i2sa5u78iGqx01fTvgVJRf/uLkt6F22n/0mlMR161a1P4PhDo5mW7B9dsAAAAASUVORK5CYII=">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  .lew-nav-outer { background: #080d1a; position: relative; z-index: 998; width: 100%; flex-shrink: 0; }
+  .lew-nav {
+    background: #080d1a; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 2.5rem; height: 72px;
+    max-width: 1400px; margin: 0 auto; position: relative;
+  }
+  .lew-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+  .lew-brand img {
+    height: 56px; width: 56px; object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(56,189,248,0.9)) drop-shadow(0 0 18px rgba(56,189,248,0.5));
+  }
+  .lew-brand-name { font-family: Orbitron, sans-serif; font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: 4px; text-shadow: 0 0 15px rgba(56,189,248,0.9); }
+  .lew-brand-name span { color: #38bdf8; }
+  .lew-nav-centre { position: absolute; left: 50%; transform: translateX(-50%); }
+  .lew-nav-links { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
+  .lew-nav-links > li { position: relative; }
+  .lew-nav-links > li > a {
+    display: flex; align-items: center; gap: 7px; padding: 0 1.4rem; height: 72px;
+    font-family: Rajdhani, sans-serif; font-size: 13px; font-weight: 700;
+    color: #cbd5e1; text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;
+    transition: color 0.2s ease; white-space: nowrap;
+  }
+  .lew-nav-links > li > a:hover, .lew-nav-links > li.lew-active > a { color: #38bdf8; }
+  .lew-nav-spacer { flex: 1; max-width: 220px; }
+  .lew-arrow { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid rgba(56,189,248,0.6); margin-top: 1px; }
+  .lew-nav-links > li > a:hover .lew-arrow { border-top-color: #38bdf8; }
+  .lew-dropdown { position: relative; }
+  .lew-dropdown-menu {
+    display: none; position: absolute; top: 100%; left: 0;
+    background: #0d1422; border: 1px solid rgba(56,189,248,0.2);
+    border-top: 2px solid #38bdf8; min-width: 180px; z-index: 999;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .lew-dropdown:hover .lew-dropdown-menu { display: block; }
+  .lew-dropdown-menu a {
+    display: block; padding: 12px 20px; font-family: Rajdhani, sans-serif;
+    font-size: 13px; font-weight: 600; color: #94a3b8; text-decoration: none;
+    letter-spacing: 1px; text-transform: uppercase;
+    transition: color 0.2s, background 0.2s, padding-left 0.2s;
+    border-bottom: 1px solid rgba(56,189,248,0.08); white-space: nowrap;
+  }
+  .lew-dropdown-menu a:last-child { border-bottom: none; }
+  .lew-dropdown-menu a:hover { color: #38bdf8; background: rgba(56,189,248,0.06); padding-left: 26px; }
+</style>
+</head>
+<body>
+<div class="lew-nav-outer">
+<nav class="lew-nav">
+  <a href="index.html" class="lew-brand">
+    <img src="data:image/png;base64,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" alt="LewGalaxy">
+    <span class="brand-stack"><span class="lew-brand-name">L<span>NS</span></span><span class="lew-brand-sub">Network &amp; Security</span></span>
+  </a>
+  <div class="lew-nav-centre"><ul class="lew-nav-links">
+    <li class="lew-dropdown lew-active">
+      <a href="#">NETWORKING <span class="lew-arrow"></span></a>
+      <div class="lew-dropdown-menu">
+        <a href="cli_sheet.html">Network CLI Reference</a>
+        <a href="port_clock.html">Port Clock</a>
+      </div>
+    </li>
+    <li><a href="#">SECURITY</a></li>
+    <li class="lew-dropdown"><a href="#">SYSTEMS <span class="lew-arrow"></span></a><div class="lew-dropdown-menu"><a href="powershell_reference.html">PowerShell Cmdlet Reference</a><a href="windows_diagnostics.html">Windows Diagnostics</a></div></li>
+  </ul></div>
+  <div class="lew-nav-spacer"></div>
+</nav>
+</div>
+
+
+<div id="topbar">
+
+  <!-- Row 1: Title + Search + Favourites -->
+  <div class="tb-row1">
+    <div class="tb-title">
+      <h1>Windows <span class="h1-accent">Diagnostics</span></h1>
+    </div>
+    <div id="search-wrap-inline" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;">
+      <input id="search" type="text" placeholder="Search commands…" autocomplete="off" spellcheck="false">
+      <span id="search-icon">⌕</span>
+      <span id="search-count"></span>
+    </div>
+    <button class="fav-btn" id="fav-filter-btn">⭐ Favourites</button>
+  </div>
+
+  <!-- Row 2: Brand pills centred -->
+  <div class="tb-row2">
+    <div class="pills">
+      <a class="pill" data-col="col-standard" href="#" style="color:#38bdf8;border-color:#38bdf8">Standard</a>
+      <a class="pill" data-col="col-elevated" href="#" style="color:#f59e0b;border-color:#f59e0b">Elevated</a>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- Row 3: Category filter centred -->
+  <div class="tb-row3">
+    <a class="jump" href="#wd0" data-filter="t-interface"><span class="jdot" style="background:var(--t-interface)"></span>Network</a>
+    <a class="jump" href="#wd1" data-filter="t-routing"><span class="jdot" style="background:var(--t-routing)"></span>System Info</a>
+    <a class="jump" href="#wd2" data-filter="t-dns"><span class="jdot" style="background:var(--t-dns)"></span>Processes</a>
+    <a class="jump" href="#wd3" data-filter="t-arp"><span class="jdot" style="background:var(--t-arp)"></span>Users</a>
+    <a class="jump" href="#wd4" data-filter="t-conn"><span class="jdot" style="background:var(--t-conn)"></span>File System</a>
+    <a class="jump" href="#wd5" data-filter="t-vpn"><span class="jdot" style="background:var(--t-vpn)"></span>Event Logs</a>
+    <a class="jump" href="#wd6" data-filter="t-capture"><span class="jdot" style="background:var(--t-capture)"></span>Net Config</a>
+    <a class="jump" href="#wd7" data-filter="t-firewall"><span class="jdot" style="background:var(--t-firewall)"></span>Repair</a>
+    <a class="jump" href="#wd8" data-filter="t-session"><span class="jdot" style="background:var(--t-session)"></span>Drivers</a>
+    <a class="jump" href="#wd9" data-filter="t-ssh"><span class="jdot" style="background:var(--t-ssh)"></span>Registry</a>
+    <a class="jump" href="#wd10" data-filter="t-interface"><span class="jdot" style="background:var(--t-interface)"></span>Remote</a>
+  </div>
+</div>
+
+<div id="recent-tray">
+  <div class="recent-header">
+    <span>⏱ Recently Copied</span>
+    <button class="recent-clear" id="recent-clear-btn">Clear</button>
+  </div>
+  <div id="recent-list"></div>
+</div>
+
+<div id="grid-wrap"><div class="grid">
+
+<!-- STANDARD COMMANDS -->
+<div class="col" id="col-standard">
+  <div class="col-head" style="border-color:#38bdf8"><span class="name" style="color:#38bdf8">Standard Commands</span></div>
+  <div class="sec t-interface" id="wd0">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Network Diagnostics</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="ipconfig" data-desc="Show IP configuration"><div class="li-text"><span class="d">Show IP configuration</span><span class="c">ipconfig</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ipconfig /all" data-desc="Show full IP config"><div class="li-text"><span class="d">Show full IP config</span><span class="c">ipconfig /all</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ipconfig /release" data-desc="Release IP address"><div class="li-text"><span class="d">Release IP address</span><span class="c">ipconfig /release</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ipconfig /renew" data-desc="Renew IP address"><div class="li-text"><span class="d">Renew IP address</span><span class="c">ipconfig /renew</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ipconfig /flushdns" data-desc="Flush DNS cache"><div class="li-text"><span class="d">Flush DNS cache</span><span class="c">ipconfig /flushdns</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ipconfig /displaydns" data-desc="Show DNS cache"><div class="li-text"><span class="d">Show DNS cache</span><span class="c">ipconfig /displaydns</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ping &lt;host&gt;" data-desc="Ping host"><div class="li-text"><span class="d">Ping host</span><span class="c">ping &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ping -t &lt;host&gt;" data-desc="Continuous ping"><div class="li-text"><span class="d">Continuous ping</span><span class="c">ping -t &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ping -n &lt;count&gt; &lt;host&gt;" data-desc="Ping with count"><div class="li-text"><span class="d">Ping with count</span><span class="c">ping -n &lt;count&gt; &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="tracert &lt;host&gt;" data-desc="Trace route to host"><div class="li-text"><span class="d">Trace route to host</span><span class="c">tracert &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="tracert -d &lt;host&gt;" data-desc="Trace route no DNS"><div class="li-text"><span class="d">Trace route no DNS</span><span class="c">tracert -d &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="nslookup &lt;host&gt;" data-desc="DNS lookup"><div class="li-text"><span class="d">DNS lookup</span><span class="c">nslookup &lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="nslookup &lt;host&gt; &lt;dns-server&gt;" data-desc="DNS lookup specific server"><div class="li-text"><span class="d">DNS lookup specific server</span><span class="c">nslookup &lt;host&gt; &lt;dns-server&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="arp -a" data-desc="Show ARP table"><div class="li-text"><span class="d">Show ARP table</span><span class="c">arp -a</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="route print" data-desc="Show routing table"><div class="li-text"><span class="d">Show routing table</span><span class="c">route print</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="telnet &lt;host&gt; &lt;port&gt;" data-desc="Test port connectivity"><div class="li-text"><span class="d">Test port connectivity</span><span class="c">telnet &lt;host&gt; &lt;port&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netstat -an" data-desc="Show network stats"><div class="li-text"><span class="d">Show network stats</span><span class="c">netstat -an</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netstat -b" data-desc="Show active connections"><div class="li-text"><span class="d">Show active connections</span><span class="c">netstat -b</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netstat -an | findstr LISTENING" data-desc="Show listening ports"><div class="li-text"><span class="d">Show listening ports</span><span class="c">netstat -an | findstr LISTENING</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netstat -ano" data-desc="Show connections with PID"><div class="li-text"><span class="d">Show connections with PID</span><span class="c">netstat -ano</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-routing" id="wd1">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">System Information</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="systeminfo" data-desc="Full system information"><div class="li-text"><span class="d">Full system information</span><span class="c">systeminfo</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="hostname" data-desc="Hostname"><div class="li-text"><span class="d">Hostname</span><span class="c">hostname</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="whoami" data-desc="Current user"><div class="li-text"><span class="d">Current user</span><span class="c">whoami</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="whoami /priv" data-desc="User privileges"><div class="li-text"><span class="d">User privileges</span><span class="c">whoami /priv</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="whoami /groups" data-desc="Group membership"><div class="li-text"><span class="d">Group membership</span><span class="c">whoami /groups</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="set" data-desc="Environment variables"><div class="li-text"><span class="d">Environment variables</span><span class="c">set</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="echo %&lt;variable&gt;%" data-desc="Specific variable"><div class="li-text"><span class="d">Specific variable</span><span class="c">echo %&lt;variable&gt;%</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="ver" data-desc="OS version"><div class="li-text"><span class="d">OS version</span><span class="c">ver</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net statistics workstation" data-desc="System uptime"><div class="li-text"><span class="d">System uptime</span><span class="c">net statistics workstation</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic bios get serialnumber,version" data-desc="BIOS information"><div class="li-text"><span class="d">BIOS information</span><span class="c">wmic bios get serialnumber,version</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic cpu get name,numberofcores,maxclockspeed" data-desc="CPU information"><div class="li-text"><span class="d">CPU information</span><span class="c">wmic cpu get name,numberofcores,maxclockspeed</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic memorychip get capacity,speed" data-desc="RAM information"><div class="li-text"><span class="d">RAM information</span><span class="c">wmic memorychip get capacity,speed</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic baseboard get product,manufacturer" data-desc="Motherboard info"><div class="li-text"><span class="d">Motherboard info</span><span class="c">wmic baseboard get product,manufacturer</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic diskdrive get model,size,status" data-desc="Disk information"><div class="li-text"><span class="d">Disk information</span><span class="c">wmic diskdrive get model,size,status</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic path win32_videocontroller get name,adapterram" data-desc="GPU information"><div class="li-text"><span class="d">GPU information</span><span class="c">wmic path win32_videocontroller get name,adapterram</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-dns" id="wd2">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Process Management</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="tasklist" data-desc="List all processes"><div class="li-text"><span class="d">List all processes</span><span class="c">tasklist</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="tasklist | findstr &lt;name&gt;" data-desc="Find process by name"><div class="li-text"><span class="d">Find process by name</span><span class="c">tasklist | findstr &lt;name&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="taskkill /IM &lt;name&gt; /F" data-desc="Kill process by name"><div class="li-text"><span class="d">Kill process by name</span><span class="c">taskkill /IM &lt;name&gt; /F</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="taskkill /PID &lt;pid&gt; /F" data-desc="Kill process by PID"><div class="li-text"><span class="d">Kill process by PID</span><span class="c">taskkill /PID &lt;pid&gt; /F</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="sc query" data-desc="List services"><div class="li-text"><span class="d">List services</span><span class="c">sc query</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="sc query state= running" data-desc="List running services"><div class="li-text"><span class="d">List running services</span><span class="c">sc query state= running</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="sc query &lt;service&gt;" data-desc="Query specific service"><div class="li-text"><span class="d">Query specific service</span><span class="c">sc query &lt;service&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="sc queryex &lt;service&gt;" data-desc="Check service status"><div class="li-text"><span class="d">Check service status</span><span class="c">sc queryex &lt;service&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net start &lt;service&gt;" data-desc="Start a service"><div class="li-text"><span class="d">Start a service</span><span class="c">net start &lt;service&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net stop &lt;service&gt;" data-desc="Stop a service"><div class="li-text"><span class="d">Stop a service</span><span class="c">net stop &lt;service&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic startup get caption,command" data-desc="List startup programs"><div class="li-text"><span class="d">List startup programs</span><span class="c">wmic startup get caption,command</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="schtasks /query /fo list" data-desc="Show scheduled tasks"><div class="li-text"><span class="d">Show scheduled tasks</span><span class="c">schtasks /query /fo list</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-arp" id="wd3">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">User and Group Management</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="net user" data-desc="List local users"><div class="li-text"><span class="d">List local users</span><span class="c">net user</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net user &lt;username&gt;" data-desc="Show user details"><div class="li-text"><span class="d">Show user details</span><span class="c">net user &lt;username&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net localgroup" data-desc="List local groups"><div class="li-text"><span class="d">List local groups</span><span class="c">net localgroup</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net localgroup &lt;groupname&gt;" data-desc="Show group members"><div class="li-text"><span class="d">Show group members</span><span class="c">net localgroup &lt;groupname&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net user /domain" data-desc="Show domain users"><div class="li-text"><span class="d">Show domain users</span><span class="c">net user /domain</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net group /domain" data-desc="Show domain groups"><div class="li-text"><span class="d">Show domain groups</span><span class="c">net group /domain</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="query session" data-desc="Show current sessions"><div class="li-text"><span class="d">Show current sessions</span><span class="c">query session</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="query user" data-desc="Show logged on users"><div class="li-text"><span class="d">Show logged on users</span><span class="c">query user</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net config workstation" data-desc="Show computer name"><div class="li-text"><span class="d">Show computer name</span><span class="c">net config workstation</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net config workstation | findstr Domain" data-desc="Show domain info"><div class="li-text"><span class="d">Show domain info</span><span class="c">net config workstation | findstr Domain</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-conn" id="wd4">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">File System</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="dir &lt;path&gt;" data-desc="List directory"><div class="li-text"><span class="d">List directory</span><span class="c">dir &lt;path&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dir /a &lt;path&gt;" data-desc="List all including hidden"><div class="li-text"><span class="d">List all including hidden</span><span class="c">dir /a &lt;path&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dir /s /b &lt;filename&gt;" data-desc="Find file by name"><div class="li-text"><span class="d">Find file by name</span><span class="c">dir /s /b &lt;filename&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dir /s &lt;path&gt;" data-desc="Show disk usage"><div class="li-text"><span class="d">Show disk usage</span><span class="c">dir /s &lt;path&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="chkdsk &lt;drive&gt;:" data-desc="Check disk"><div class="li-text"><span class="d">Check disk</span><span class="c">chkdsk &lt;drive&gt;:</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic logicaldisk get name,size,freespace,filesystem" data-desc="Show drive info"><div class="li-text"><span class="d">Show drive info</span><span class="c">wmic logicaldisk get name,size,freespace,filesystem</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net share" data-desc="Show shared folders"><div class="li-text"><span class="d">Show shared folders</span><span class="c">net share</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="findstr &lt;text&gt; &lt;file&gt;" data-desc="Find text in file"><div class="li-text"><span class="d">Find text in file</span><span class="c">findstr &lt;text&gt; &lt;file&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="fc &lt;file1&gt; &lt;file2&gt;" data-desc="Compare two files"><div class="li-text"><span class="d">Compare two files</span><span class="c">fc &lt;file1&gt; &lt;file2&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="attrib &lt;file&gt;" data-desc="Show file attributes"><div class="li-text"><span class="d">Show file attributes</span><span class="c">attrib &lt;file&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="tree &lt;path&gt;" data-desc="Tree view of directory"><div class="li-text"><span class="d">Tree view of directory</span><span class="c">tree &lt;path&gt;</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-vpn" id="wd5">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Event Logs</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="wevtutil el" data-desc="List event logs"><div class="li-text"><span class="d">List event logs</span><span class="c">wevtutil el</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil qe System /c:10 /rd:true /f:text" data-desc="Query system log"><div class="li-text"><span class="d">Query system log</span><span class="c">wevtutil qe System /c:10 /rd:true /f:text</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil qe Application /c:10 /rd:true /f:text" data-desc="Query application log"><div class="li-text"><span class="d">Query application log</span><span class="c">wevtutil qe Application /c:10 /rd:true /f:text</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil qe Security /c:10 /rd:true /f:text" data-desc="Query security log"><div class="li-text"><span class="d">Query security log</span><span class="c">wevtutil qe Security /c:10 /rd:true /f:text</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil cl System" data-desc="Clear system log"><div class="li-text"><span class="d">Clear system log</span><span class="c">wevtutil cl System</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil epl System &lt;output.evtx&gt;" data-desc="Export event log"><div class="li-text"><span class="d">Export event log</span><span class="c">wevtutil epl System &lt;output.evtx&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil qe System /q:&amp;quot;*[System[Level=2]]&amp;quot; /c:20 /f:text" data-desc="Find error events"><div class="li-text"><span class="d">Find error events</span><span class="c">wevtutil qe System /q:&quot;*[System[Level=2]]&quot; /c:20 /f:text</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wevtutil qe System /q:&amp;quot;*[System[Level=3]]&amp;quot; /c:20 /f:text" data-desc="Find warning events"><div class="li-text"><span class="d">Find warning events</span><span class="c">wevtutil qe System /q:&quot;*[System[Level=3]]&quot; /c:20 /f:text</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ELEVATED COMMANDS -->
+<div class="col" id="col-elevated">
+  <div class="col-head" style="border-color:#f59e0b"><span class="name" style="color:#f59e0b">Elevated Commands</span></div>
+  <div class="sec t-capture" id="wd6">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Network Configuration</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="route add &lt;dest&gt; mask &lt;mask&gt; &lt;gateway&gt;" data-desc="Add static route"><div class="li-text"><span class="d">Add static route</span><span class="c">route add &lt;dest&gt; mask &lt;mask&gt; &lt;gateway&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="route delete &lt;dest&gt;" data-desc="Delete route"><div class="li-text"><span class="d">Delete route</span><span class="c">route delete &lt;dest&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh interface show interface" data-desc="Show interface config"><div class="li-text"><span class="d">Show interface config</span><span class="c">netsh interface show interface</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh interface ip set address &lt;interface&gt; static &lt;ip&gt; &lt;mask&gt; &lt;gateway&gt;" data-desc="Set static IP"><div class="li-text"><span class="d">Set static IP</span><span class="c">netsh interface ip set address &lt;interface&gt; static &lt;ip&gt; &lt;mask&gt; &lt;gateway&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh interface ip set address &lt;interface&gt; dhcp" data-desc="Set DHCP"><div class="li-text"><span class="d">Set DHCP</span><span class="c">netsh interface ip set address &lt;interface&gt; dhcp</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh interface ip set dns &lt;interface&gt; static &lt;dns-ip&gt;" data-desc="Set DNS server"><div class="li-text"><span class="d">Set DNS server</span><span class="c">netsh interface ip set dns &lt;interface&gt; static &lt;dns-ip&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh wlan show profiles" data-desc="Show WiFi profiles"><div class="li-text"><span class="d">Show WiFi profiles</span><span class="c">netsh wlan show profiles</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh wlan show profile name=&lt;ssid&gt; key=clear" data-desc="Show WiFi password"><div class="li-text"><span class="d">Show WiFi password</span><span class="c">netsh wlan show profile name=&lt;ssid&gt; key=clear</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall show allprofiles" data-desc="Show firewall status"><div class="li-text"><span class="d">Show firewall status</span><span class="c">netsh advfirewall show allprofiles</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall set allprofiles state on" data-desc="Enable firewall"><div class="li-text"><span class="d">Enable firewall</span><span class="c">netsh advfirewall set allprofiles state on</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall set allprofiles state off" data-desc="Disable firewall"><div class="li-text"><span class="d">Disable firewall</span><span class="c">netsh advfirewall set allprofiles state off</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall firewall show rule name=all" data-desc="List firewall rules"><div class="li-text"><span class="d">List firewall rules</span><span class="c">netsh advfirewall firewall show rule name=all</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall firewall add rule name=&lt;name&gt; dir=in action=allow protocol=TCP localport=&lt;port&gt;" data-desc="Add firewall rule"><div class="li-text"><span class="d">Add firewall rule</span><span class="c">netsh advfirewall firewall add rule name=&lt;name&gt; dir=in action=allow protocol=TCP localport=&lt;port&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh advfirewall firewall delete rule name=&lt;name&gt;" data-desc="Delete firewall rule"><div class="li-text"><span class="d">Delete firewall rule</span><span class="c">netsh advfirewall firewall delete rule name=&lt;name&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh int ip reset" data-desc="Reset network stack"><div class="li-text"><span class="d">Reset network stack</span><span class="c">netsh int ip reset</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="netsh winsock reset" data-desc="Reset Winsock"><div class="li-text"><span class="d">Reset Winsock</span><span class="c">netsh winsock reset</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-firewall" id="wd7">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">System Repair</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="sfc /scannow" data-desc="System file checker"><div class="li-text"><span class="d">System file checker</span><span class="c">sfc /scannow</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dism /online /cleanup-image /checkhealth" data-desc="DISM health check"><div class="li-text"><span class="d">DISM health check</span><span class="c">dism /online /cleanup-image /checkhealth</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dism /online /cleanup-image /scanhealth" data-desc="DISM scan health"><div class="li-text"><span class="d">DISM scan health</span><span class="c">dism /online /cleanup-image /scanhealth</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="dism /online /cleanup-image /restorehealth" data-desc="DISM restore health"><div class="li-text"><span class="d">DISM restore health</span><span class="c">dism /online /cleanup-image /restorehealth</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="bcdedit" data-desc="Check boot config"><div class="li-text"><span class="d">Check boot config</span><span class="c">bcdedit</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="bootrec /fixmbr" data-desc="Repair boot record"><div class="li-text"><span class="d">Repair boot record</span><span class="c">bootrec /fixmbr</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="bootrec /fixboot" data-desc="Repair boot sector"><div class="li-text"><span class="d">Repair boot sector</span><span class="c">bootrec /fixboot</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="bootrec /rebuildbcd" data-desc="Rebuild BCD"><div class="li-text"><span class="d">Rebuild BCD</span><span class="c">bootrec /rebuildbcd</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="mdsched" data-desc="Memory diagnostic"><div class="li-text"><span class="d">Memory diagnostic</span><span class="c">mdsched</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="chkdsk &lt;drive&gt;: /f /r" data-desc="Disk repair on reboot"><div class="li-text"><span class="d">Disk repair on reboot</span><span class="c">chkdsk &lt;drive&gt;: /f /r</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-session" id="wd8">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Driver and Hardware</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="driverquery" data-desc="List all drivers"><div class="li-text"><span class="d">List all drivers</span><span class="c">driverquery</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="driverquery /v /fo list" data-desc="List drivers verbose"><div class="li-text"><span class="d">List drivers verbose</span><span class="c">driverquery /v /fo list</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="driverquery /si" data-desc="List signed drivers"><div class="li-text"><span class="d">List signed drivers</span><span class="c">driverquery /si</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic path win32_pnpentity get name,deviceid,status" data-desc="Show PnP devices"><div class="li-text"><span class="d">Show PnP devices</span><span class="c">wmic path win32_pnpentity get name,deviceid,status</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic path win32_usbcontroller get name" data-desc="List USB devices"><div class="li-text"><span class="d">List USB devices</span><span class="c">wmic path win32_usbcontroller get name</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="wmic printer get name,portname,status" data-desc="Show printer info"><div class="li-text"><span class="d">Show printer info</span><span class="c">wmic printer get name,portname,status</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="printmanagement.msc" data-desc="List installed printers"><div class="li-text"><span class="d">List installed printers</span><span class="c">printmanagement.msc</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="powercfg /batteryreport" data-desc="Show battery info"><div class="li-text"><span class="d">Show battery info</span><span class="c">powercfg /batteryreport</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="powercfg /list" data-desc="Show power config"><div class="li-text"><span class="d">Show power config</span><span class="c">powercfg /list</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-ssh" id="wd9">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Registry</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="reg query &lt;keypath&gt;" data-desc="Query registry key"><div class="li-text"><span class="d">Query registry key</span><span class="c">reg query &lt;keypath&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg query &lt;keypath&gt; /v &lt;valuename&gt;" data-desc="Query specific value"><div class="li-text"><span class="d">Query specific value</span><span class="c">reg query &lt;keypath&gt; /v &lt;valuename&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg query HKLM /f &lt;searchterm&gt; /s" data-desc="Search registry"><div class="li-text"><span class="d">Search registry</span><span class="c">reg query HKLM /f &lt;searchterm&gt; /s</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg export &lt;keypath&gt; &lt;file.reg&gt;" data-desc="Export registry key"><div class="li-text"><span class="d">Export registry key</span><span class="c">reg export &lt;keypath&gt; &lt;file.reg&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg import &lt;file.reg&gt;" data-desc="Import registry file"><div class="li-text"><span class="d">Import registry file</span><span class="c">reg import &lt;file.reg&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg add &lt;keypath&gt; /v &lt;name&gt; /t REG_SZ /d &lt;data&gt;" data-desc="Add registry value"><div class="li-text"><span class="d">Add registry value</span><span class="c">reg add &lt;keypath&gt; /v &lt;name&gt; /t REG_SZ /d &lt;data&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="reg delete &lt;keypath&gt; /v &lt;valuename&gt; /f" data-desc="Delete registry value"><div class="li-text"><span class="d">Delete registry value</span><span class="c">reg delete &lt;keypath&gt; /v &lt;valuename&gt; /f</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+  <div class="sec t-interface" id="wd10">
+    <div class="sec-label" onclick="toggleSec(this)"><span class="sec-label-left">Remote Management</span><span class="sec-toggle">&#9662;</span></div>
+    <ul class="cmds">
+      <li data-cmd="mstsc /v:&lt;host&gt;" data-desc="RDP to remote host"><div class="li-text"><span class="d">RDP to remote host</span><span class="c">mstsc /v:&lt;host&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="mstsc /v:&lt;host&gt; /f" data-desc="RDP full screen"><div class="li-text"><span class="d">RDP full screen</span><span class="c">mstsc /v:&lt;host&gt; /f</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net use &lt;drive&gt;: \&lt;server&gt;\&lt;share&gt;" data-desc="Map network drive"><div class="li-text"><span class="d">Map network drive</span><span class="c">net use &lt;drive&gt;: \&lt;server&gt;\&lt;share&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net use &lt;drive&gt;: /delete" data-desc="Disconnect network drive"><div class="li-text"><span class="d">Disconnect network drive</span><span class="c">net use &lt;drive&gt;: /delete</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="net use" data-desc="List network connections"><div class="li-text"><span class="d">List network connections</span><span class="c">net use</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="msg &lt;username&gt; &lt;message&gt;" data-desc="Send message to user"><div class="li-text"><span class="d">Send message to user</span><span class="c">msg &lt;username&gt; &lt;message&gt;</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="shutdown /m \&lt;computer&gt; /s /t 0" data-desc="Shutdown remote PC"><div class="li-text"><span class="d">Shutdown remote PC</span><span class="c">shutdown /m \&lt;computer&gt; /s /t 0</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="shutdown /m \&lt;computer&gt; /r /t 0" data-desc="Restart remote PC"><div class="li-text"><span class="d">Restart remote PC</span><span class="c">shutdown /m \&lt;computer&gt; /r /t 0</span></div><span class="star">&#9734;</span></li>
+      <li data-cmd="psexec \&lt;computer&gt; &lt;command&gt;" data-desc="PsExec remote command"><div class="li-text"><span class="d">PsExec remote command</span><span class="c">psexec \&lt;computer&gt; &lt;command&gt;</span></div><span class="star">&#9734;</span></li>
+    </ul>
+  </div>
+</div>
+
+</div></div>
+
+<div id="recent-tray">
+  <div class="recent-header">
+    <span>⏱ Recently Copied</span>
+    <button class="recent-clear" id="recent-clear-btn">Clear</button>
+  </div>
+  <div id="recent-list"></div>
+</div>
+
+
+
+<footer>PowerShell Cmdlet Reference &nbsp;·&nbsp; AD · Azure AD · MS Graph · Exchange</footer>
+<div id="toast"></div>
+
+<!-- ══ COMMAND BUILDER ══ -->
+<div id="builder-overlay">
+  <div id="builder-panel">
+    <div class="builder-top">
+      <span class="builder-title">⚙ Command Builder</span>
+      <button class="builder-close" id="builder-close">✕</button>
+    </div>
+    <div class="builder-desc" id="builder-desc"></div>
+    <div class="builder-fields" id="builder-fields"></div>
+    <div class="builder-terminal">
+      <span class="prompt">$</span>
+      <span class="cmd-out" id="builder-output"></span>
+    </div>
+    <div class="builder-actions">
+      <button class="builder-copy-btn" id="builder-copy">Copy Command</button>
+      <button class="builder-cancel-btn" id="builder-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ══════════════════════════════════════
+  // FAVOURITES
+  // ══════════════════════════════════════
+  const FAV_KEY = 'wd_v1_favourites';
+  let favourites = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+  let showingFavs = false;
+
+  function saveFavourites() {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favourites));
+  }
+
+  function applyStars() {
+    document.querySelectorAll('.star').forEach(star => {
+      const cmd = star.closest('li').dataset.cmd;
+      const isStarred = favourites.includes(cmd);
+      star.textContent = isStarred ? '★' : '☆';
+      star.classList.toggle('starred', isStarred);
+    });
+  }
+
+  document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', e => {
+      e.stopPropagation(); // don't trigger copy or builder
+      const li = star.closest('li');
+      const cmd = li.dataset.cmd;
+      if (favourites.includes(cmd)) {
+        favourites = favourites.filter(f => f !== cmd);
+      } else {
+        favourites.push(cmd);
+      }
+      saveFavourites();
+      applyStars();
+      if (showingFavs) applyFavouriteFilter();
+    });
+  });
+
+  function applyFavouriteFilter() {
+    document.querySelectorAll('.col').forEach(col => {
+      let colMatch = false;
+      col.querySelectorAll('.sec').forEach(sec => {
+        let secMatch = false;
+        sec.querySelectorAll('.cmds li').forEach(li => {
+          const show = favourites.includes(li.dataset.cmd);
+          li.classList.toggle('hidden', !show);
+          if (show) { secMatch = true; colMatch = true; }
+        });
+        sec.classList.toggle('all-hidden', !secMatch);
+      });
+      col.classList.toggle('no-match', !colMatch);
+    });
+  }
+
+  const favBtn = document.getElementById('fav-filter-btn');
+  favBtn.addEventListener('click', () => {
+    showingFavs = !showingFavs;
+    favBtn.classList.toggle('active', showingFavs);
+    if (showingFavs) {
+      applyFavouriteFilter();
+    } else {
+      // clear filter — restore all rows and sections
+      document.querySelectorAll('.col').forEach(col => {
+        col.classList.remove('no-match');
+        col.querySelectorAll('.sec').forEach(sec => {
+          sec.classList.remove('all-hidden', 'collapsed');
+          sec.querySelectorAll('.cmds li').forEach(li => li.classList.remove('hidden'));
+        });
+      });
+      document.getElementById('search-count').textContent = '';
+    }
+  });
+
+  applyStars();
+
+  // ══════════════════════════════════════
+  // RECENTLY COPIED
+  // ══════════════════════════════════════
+  const RECENT_KEY = 'wd_v1_recent';
+  let recentCopied = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+
+  function saveRecent() {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recentCopied));
+  }
+
+  function renderRecent() {
+    const tray = document.getElementById('recent-tray');
+    const list = document.getElementById('recent-list');
+    list.innerHTML = '';
+    if (recentCopied.length === 0) {
+      tray.classList.remove('visible');
+      return;
+    }
+    tray.classList.add('visible');
+    recentCopied.forEach(cmd => {
+      const item = document.createElement('div');
+      item.className = 'recent-item';
+      item.textContent = cmd;
+      item.title = 'Click to copy again';
+      item.addEventListener('click', () => {
+        navigator.clipboard.writeText(cmd).then(() => showToast('Copied: ' + cmd.substring(0,48) + (cmd.length>48?'…':'')));
+      });
+      list.appendChild(item);
+    });
+  }
+
+  function addToRecent(cmd) {
+    recentCopied = recentCopied.filter(c => c !== cmd); // remove duplicate
+    recentCopied.unshift(cmd);
+    if (recentCopied.length > 5) recentCopied = recentCopied.slice(0, 5);
+    saveRecent();
+    renderRecent();
+  }
+
+  document.getElementById('recent-clear-btn').addEventListener('click', () => {
+    recentCopied = [];
+    saveRecent();
+    renderRecent();
+  });
+
+  renderRecent();
+
+  // ══════════════════════════════════════
+  // COMMAND BUILDER
+  // ══════════════════════════════════════
+  const overlay   = document.getElementById('builder-overlay');
+  const descEl    = document.getElementById('builder-desc');
+  const fieldsEl  = document.getElementById('builder-fields');
+  const outputEl  = document.getElementById('builder-output');
+  let builderTemplate = '';
+
+  function openBuilder(desc, cmdTemplate) {
+    builderTemplate = cmdTemplate;
+    descEl.textContent = desc;
+    fieldsEl.innerHTML = '';
+
+    // Find all <placeholder> tokens
+    const placeholders = [...new Set(cmdTemplate.match(/<[^>]+>/g) || [])];
+
+    if (placeholders.length === 0) {
+      // No placeholders — just show and copy directly
+      outputEl.innerHTML = `<span style="color:#34d399">${cmdTemplate}</span>`;
+      overlay.classList.add('visible');
+      return;
+    }
+
+    placeholders.forEach(ph => {
+      const name = ph.replace(/[<>]/g, '');
+      const field = document.createElement('div');
+      field.className = 'builder-field';
+      const placeholderMap = {
+        'host': 'e.g. 192.168.1.1',
+        'count': 'e.g. 4',
+        'ip': 'e.g. 192.168.1.1',
+        'dns-server': 'e.g. 8.8.8.8',
+        'interface': 'e.g. Ethernet0',
+        'mask': 'e.g. 255.255.255.0',
+        'gateway': 'e.g. 192.168.1.254',
+        'dest': 'e.g. 10.0.0.0',
+        'port': 'e.g. 443',
+        'service': 'e.g. wuauserv',
+        'name': 'e.g. myprocess',
+        'pid': 'e.g. 1234',
+        'drive': 'e.g. C',
+        'path': 'e.g. C:\Users',
+        'filename': 'e.g. report.txt',
+        'username': 'e.g. jsmith',
+        'groupname': 'e.g. Administrators',
+        'computer': 'e.g. DESKTOP-001',
+        'server': 'e.g. SERVER01',
+        'share': 'e.g. SharedFolder',
+        'ssid': 'e.g. MyWiFi',
+        'dns-ip': 'e.g. 8.8.8.8',
+        'keypath': 'e.g. HKLM\SOFTWARE\MyApp',
+        'valuename': 'e.g. Version',
+        'searchterm': 'e.g. MyApp',
+        'data': 'e.g. MyValue',
+        'text': 'e.g. error',
+        'message': 'e.g. Hello',
+        'file': 'e.g. backup.reg',
+        'file1': 'e.g. file1.txt',
+        'file2': 'e.g. file2.txt',
+        'variable': 'e.g. PATH',
+        'command': 'e.g. ipconfig',
+      };
+      const ph_placeholder = placeholderMap[name] || 'e.g. value';
+    field.innerHTML = `<label style="color:#38bdf8;font-family:Orbitron,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;">${name}</label><input type=text placeholder=${ph_placeholder} data-ph=${ph}>`;
+      fieldsEl.appendChild(field);
+    });
+
+    updateBuilderOutput();
+    overlay.classList.add('visible');
+
+    // Focus first input
+    const first = fieldsEl.querySelector('input');
+    if (first) setTimeout(() => first.focus(), 50);
+
+    // Live update on input
+    fieldsEl.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', updateBuilderOutput);
+    });
+  }
+
+  function updateBuilderOutput() {
+    let result = builderTemplate;
+    let allFilled = true;
+    fieldsEl.querySelectorAll('input').forEach(inp => {
+      const ph = inp.dataset.ph;
+      if (inp.value.trim()) {
+        result = result.split(ph).join(`<span style="color:#f4c542">${inp.value.trim()}</span>`);
+      } else {
+        result = result.split(ph).join(`<span class="placeholder-part">${ph}</span>`);
+        allFilled = false;
+      }
+    });
+    outputEl.innerHTML = result;
+    document.getElementById('builder-copy').style.opacity = allFilled ? '1' : '0.5';
+  }
+
+  function getBuiltCommand() {
+    let result = builderTemplate;
+    fieldsEl.querySelectorAll('input').forEach(inp => {
+      if (inp.value.trim()) result = result.split(inp.dataset.ph).join(inp.value.trim());
+    });
+    return result;
+  }
+
+  function closeBuilder() {
+    overlay.classList.remove('visible');
+    fieldsEl.innerHTML = '';
+    outputEl.innerHTML = '';
+  }
+
+  document.getElementById('builder-close').addEventListener('click', closeBuilder);
+  document.getElementById('builder-cancel').addEventListener('click', closeBuilder);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeBuilder(); });
+
+  document.getElementById('builder-copy').addEventListener('click', () => {
+    const cmd = getBuiltCommand();
+    navigator.clipboard.writeText(cmd).then(() => {
+      addToRecent(cmd);
+      showToast('Copied: ' + cmd.substring(0,48) + (cmd.length>48?'…':''));
+      closeBuilder();
+    });
+  });
+
+  // Escape key closes builder
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeBuilder();
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('search').focus();
+    }
+  });
+
+  // ══════════════════════════════════════
+  // WIRE UP COPY + BUILDER ON CLICK
+  // ══════════════════════════════════════
+
+  function toggleSec(el){el.closest('.sec').classList.toggle('collapsed');}
+
+  document.querySelectorAll('.cmds li').forEach(li=>{
+    li.addEventListener('click', e => {
+      if (e.target.classList.contains('star')) return; // handled by star listener
+      const cEl = li.querySelector('.c');
+      const dEl = li.querySelector('.d');
+      let cmdTemplate = cEl.innerText.replace(/📋/g,'').replace(/\s*(PS|CMD)\s*/g,'').trim();
+      const desc = dEl ? dEl.innerText.trim() : cmdTemplate;
+      // Check if command has placeholders
+      if (/<[^>]+>/.test(cmdTemplate)) {
+        openBuilder(desc, cmdTemplate);
+      } else {
+        // No placeholders — copy directly
+        navigator.clipboard.writeText(cmdTemplate).then(()=>{
+          li.classList.add('copied');
+          setTimeout(()=>li.classList.remove('copied'),800);
+          addToRecent(cmdTemplate);
+          showToast('Copied: '+cmdTemplate.substring(0,48)+(cmdTemplate.length>48?'…':''));
+        }).catch(()=>{
+          const ta=document.createElement('textarea');
+          ta.value=cmdTemplate;document.body.appendChild(ta);ta.select();
+          document.execCommand('copy');document.body.removeChild(ta);
+          addToRecent(cmdTemplate);
+          showToast('Copied!');
+        });
+      }
+    });
+  });
+
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);
+  }
+
+  function escRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+  function highlight(el,q){
+    el.querySelectorAll('mark').forEach(m=>m.replaceWith(document.createTextNode(m.textContent)));
+    el.normalize();
+    if(!q)return;
+    const re=new RegExp('('+escRe(q)+')','gi');
+    function walk(node){
+      if(node.nodeType===3&&node.textContent.match(re)){
+        const frag=document.createDocumentFragment();
+        node.textContent.split(re).forEach((p,i)=>{
+          if(i%2===1){const m=document.createElement('mark');m.textContent=p;frag.appendChild(m);}
+          else if(p)frag.appendChild(document.createTextNode(p));
+        });
+        node.replaceWith(frag);
+      }else if(node.nodeType===1&&node.nodeName!=='MARK'&&!node.classList.contains('badge')){
+        [...node.childNodes].forEach(walk);
+      }
+    }
+    walk(el);
+  }
+
+  function setColHeadTop(){
+    document.querySelectorAll('.col-head').forEach(el=>el.style.top='0px');
+    document.querySelectorAll('.col').forEach(el=>el.style.scrollMarginTop='14px');
+  }
+  setColHeadTop();
+  window.addEventListener('resize',setColHeadTop);
+
+  // ── Platform pill — column filter ──
+  const activeCols = new Set();
+
+  document.querySelectorAll('.pill[data-col]').forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.preventDefault();
+      const colId = pill.dataset.col;
+      if (activeCols.has(colId)) {
+        activeCols.delete(colId);
+        pill.classList.remove('active');
+      } else {
+        activeCols.add(colId);
+        pill.classList.add('active');
+      }
+      document.querySelectorAll('.col').forEach(col => {
+        const show = activeCols.size === 0 || activeCols.has(col.id);
+        col.classList.toggle('col-hidden', !show);
+      });
+      document.querySelectorAll('.pills').forEach(p => {
+        p.classList.toggle('has-active', activeCols.size > 0);
+      });
+    });
+  });
+
+  // ── Jump nav — filter by section type ──
+  let activeFilter = null;
+
+  function applyFilter(typeClass) {
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    document.querySelectorAll('.col').forEach(col => {
+      let colMatch = false;
+      col.querySelectorAll('.sec').forEach(sec => {
+        const secMatches = !typeClass || sec.classList.contains(typeClass);
+        let secHasItems = false;
+        sec.querySelectorAll('.cmds li').forEach(li => {
+          const txtMatch = !q || ((li.dataset.cmd||'')+' '+li.textContent).toLowerCase().includes(q);
+          const show = secMatches && txtMatch;
+          li.classList.toggle('hidden', !show);
+          if (show) { secHasItems = true; colMatch = true; }
+        });
+        sec.classList.toggle('all-hidden', !secHasItems);
+        if (secHasItems) sec.classList.remove('collapsed');
+      });
+      col.classList.toggle('no-match', !colMatch);
+    });
+    const count = document.querySelectorAll('.cmds li:not(.hidden)').length;
+    document.getElementById('search-count').textContent =
+      (typeClass || q) ? count + ' command' + (count !== 1 ? 's' : '') + ' matched' : '';
+  }
+
+  document.querySelectorAll('.jump[data-filter]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const f = btn.dataset.filter;
+      if (activeFilter === f) {
+        // toggle off — clear filter
+        activeFilter = null;
+        btn.classList.remove('active');
+        applyFilter(null);
+      } else {
+        document.querySelectorAll('.jump').forEach(b => b.classList.remove('active'));
+        activeFilter = f;
+        btn.classList.add('active');
+        applyFilter(f);
+      }
+    });
+  });
+
+  // Re-run filter when search changes (keeps both working together)
+  document.getElementById('search').addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    if (!activeFilter && !q) {
+      // reset everything
+      document.querySelectorAll('.col').forEach(col => {
+        col.classList.remove('no-match');
+        col.querySelectorAll('.sec').forEach(sec => {
+          sec.classList.remove('all-hidden');
+          sec.querySelectorAll('.cmds li').forEach(li => {
+            li.classList.remove('hidden');
+            highlight(li, '');
+          });
+        });
+      });
+      document.getElementById('search-count').textContent = '';
+      return;
+    }
+    // merged filter + search
+    let count = 0;
+    document.querySelectorAll('.col').forEach(col => {
+      let colMatch = false;
+      col.querySelectorAll('.sec').forEach(sec => {
+        const secMatches = !activeFilter || sec.classList.contains(activeFilter);
+        let secHasItems = false;
+        sec.querySelectorAll('.cmds li').forEach(li => {
+          const txtMatch = !q || ((li.dataset.cmd||'')+' '+li.textContent).toLowerCase().includes(q);
+          const show = secMatches && txtMatch;
+          li.classList.toggle('hidden', !show);
+          const c = li.querySelector('.c'), d = li.querySelector('.d');
+          if (show) {
+            secHasItems = true; colMatch = true; count++;
+            if (q) { highlight(c, q); highlight(d, q); }
+          } else {
+            [c,d].forEach(el => { el.querySelectorAll('mark').forEach(m => m.replaceWith(document.createTextNode(m.textContent))); el.normalize(); });
+          }
+        });
+        sec.classList.toggle('all-hidden', !secHasItems);
+        if (secHasItems) sec.classList.remove('collapsed');
+      });
+      col.classList.toggle('no-match', !colMatch);
+    });
+    document.getElementById('search-count').textContent = count + ' command' + (count !== 1 ? 's' : '') + ' matched';
+  });
+</script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <a href="index.html" class="footer-brand">L<span>NS</span></a>
+    <div class="footer-links">
+      <a href="https://lew-netsec.github.io" target="_blank">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+    <span class="footer-copy">© 2025 Lew NetSec. All rights reserved.</span>
+  </div>
+</footer>
+</body>
+</html>
