@@ -93,21 +93,27 @@
   }
   .nav-btn.has-fails .fail-dot { display: block; }
 
-  /* scroll area — mobile */
+  /* main area — takes remaining height, flex column */
+  .main-area {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* scroll area — fills space between header and toggle bar */
   .scroll-area {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(68px + var(--safe-bottom));
   }
 
-  /* bottom toggle bar — mobile only */
+  /* bottom toggle bar — in normal flow on mobile, not fixed */
   .toggle-bar {
-    position: fixed;
-    bottom: var(--safe-bottom);
-    left: 0; right: 0;
+    flex-shrink: 0;
     height: 62px;
     background: var(--card);
     border-top: 1px solid var(--border);
@@ -116,7 +122,6 @@
     justify-content: center;
     padding: 9px 12px;
     gap: 8px;
-    z-index: 100;
     box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
   }
 
@@ -292,6 +297,7 @@
     /* main content area */
     .main-area {
       flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -322,6 +328,7 @@
 
     .scroll-area {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
       padding-bottom: 32px;
@@ -538,7 +545,7 @@
     <div class="sidebar-cards" id="sidebarCards"></div>
   </aside>
 
-  <!-- MAIN: header + scroll area -->
+  <!-- MAIN: header + scroll area + mobile bottom bar -->
   <div class="main-area">
     <div class="desktop-header" id="desktopHeader" style="display:none">
       <span class="desktop-header-title" id="desktopTitle">Notes</span>
@@ -548,15 +555,15 @@
     <div class="scroll-area" id="scrollArea">
       <div id="pageContent"></div>
     </div>
+
+    <!-- MOBILE: bottom toggle bar — inside main-area so it participates in flex flow -->
+    <div class="toggle-bar" id="toggleBar">
+      <button class="toggle-btn notes-btn active" id="notesBtn" onclick="setView('notes')">📖 Notes</button>
+      <button class="toggle-btn quiz-btn" id="quizBtn" onclick="setView('quiz')">🧠 Quiz <span class="q-badge" id="failBadge"></span></button>
+      <button class="toggle-btn results-btn" id="resultsBtn" onclick="setView('results')">📊 Results</button>
+    </div>
   </div>
 
-</div>
-
-<!-- MOBILE: fixed bottom toggle bar (hidden on desktop) -->
-<div class="toggle-bar">
-  <button class="toggle-btn notes-btn active" id="notesBtn" onclick="setView('notes')">📖 Notes</button>
-  <button class="toggle-btn quiz-btn" id="quizBtn" onclick="setView('quiz')">🧠 Quiz <span class="q-badge" id="failBadge"></span></button>
-  <button class="toggle-btn results-btn" id="resultsBtn" onclick="setView('results')">📊 Results</button>
 </div>
 
 <script>
