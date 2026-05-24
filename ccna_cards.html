@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
 <title>CCNA Visual Cards · LNS</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -427,35 +427,54 @@
 
   /* ── RESPONSIVE ───────────────────────────────── */
   @media (max-width: 768px) {
-    .sidebar {
-      transform: translateX(-100%);
-    }
-    .sidebar.open {
-      transform: translateX(0);
-    }
-    .mobile-header {
-      display: flex;
-    }
-    .main-content {
-      margin-left: 0;
-      padding-top: 52px;
-    }
-    main {
-      padding: 12px 16px 60px;
-    }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .mobile-header { display: flex; }
+    .main-content { margin-left: 0; padding-top: 52px; }
+    main { padding: 14px 14px 60px; }
 
+    /* SVGs scroll horizontally instead of shrinking to unreadable size */
+    .visual-wrap { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+    .visual-wrap svg { min-width: 520px; width: 100% !important; max-width: none; }
+
+    /* Card typography scales up for high-density screens */
+    .oneliner { font-size: 15px; line-height: 1.6; }
+    .hook-box { font-size: 14px; line-height: 1.65; }
+    .trap-text { font-size: 14px; line-height: 1.6; }
+    .rc-name { font-size: 14px; }
+    .rc-desc { font-size: 12px; }
+    .term-pill { font-size: 13px; padding: 6px 14px; }
+    .extra-section-body { font-size: 14px; }
+    .hook-label { font-size: 11px; }
+    .trap-label { font-size: 12px; }
+    .related-card { min-width: 140px; padding: 12px 14px; }
+
+    /* Tables scroll horizontally */
+    .extra-section-body div[style*="overflow-x"] { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .extra-section-body table { min-width: 480px; font-size: 13px; }
+    .extra-section-body table td, .extra-section-body table th { padding: 9px 12px; }
+
+    /* Card header */
+    .card-header { padding: 18px 16px 14px; gap: 10px; }
+    .topic-name { font-size: 19px; }
+    .icon-badge { width: 42px; height: 42px; }
+    .badge { font-size: 12px; padding: 5px 11px; }
+    .card-body { padding: 18px 16px; }
   }
 
+  /* Targets ~412px CSS width of S24 Ultra and similar */
   @media (max-width: 480px) {
-    .card-header {
-      padding: 16px 16px 14px;
-    }
-    .card-body {
-      padding: 16px 16px;
-    }
-    .topic-name {
-      font-size: 18px;
-    }
+    main { padding: 12px 10px 60px; }
+    .card-header { padding: 16px 14px 14px; }
+    .card-body { padding: 16px 14px; }
+    .topic-name { font-size: 18px; }
+    .oneliner { font-size: 15px; }
+    .terms-wrap { gap: 7px; }
+    .term-pill { font-size: 13px; }
+
+    /* Topology map SVG also scrollable */
+    .topo-card svg { min-width: 580px; }
+    .topo-card div[style*="padding"] { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   }
 </style>
 </head>
