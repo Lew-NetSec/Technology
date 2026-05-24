@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNA Visual Cards · LNS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page:    #0d1117;
+    --bg-sidebar: #10161e;
+    --bg-card:    #ffffff;
+    --border-s:   rgba(255,255,255,0.07);
+    --border-c:   rgba(0,0,0,0.08);
+    --text-page:  #c9d1d9;
+    --text-muted: #6e7681;
+    --accent:     #378ADD;
+    --accent-bg:  rgba(55,138,221,0.12);
+    --sidebar-w:  220px;
+    --l1: #F1EFE8; --l1t: #5F5E5A;
+    --l2: #FAECE7; --l2t: #993C1D;
+    --l3: #FAEEDA; --l3t: #854F0B;
+    --l4: #E1F5EE; --l4t: #0F6E56;
+    --l57: #EEEDFE; --l57t: #534AB7;
+    --sec: #FCEBEB; --sect: #A32D2D;
+    --gen: #E6F1FB; --gent: #185FA5;
+    --card: #FFFFFF;
+    --text: #1a1a18;
+    --muted: #6b6b68;
+    --shadow: 0 2px 8px rgba(0,0,0,0.18), 0 8px 32px rgba(0,0,0,0.14);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-page);
+    color: var(--text-page);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ──────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-s);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 200;
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar::-webkit-scrollbar { width: 0; }
+
+  .sidebar-brand {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--border-s);
+    flex-shrink: 0;
+  }
+  .brand-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .brand-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    padding: 14px 0 6px;
+    flex-shrink: 0;
+  }
+  .nav-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 18px 6px;
+    display: block;
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s, background 0.15s;
+    border-radius: 0;
+    white-space: nowrap;
+    position: relative;
+  }
+  .nav-btn:hover {
+    color: var(--text-page);
+    background: rgba(255,255,255,0.04);
+  }
+  .nav-btn.active {
+    color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .nav-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 4px; bottom: 4px;
+    width: 2px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-icon {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 18px;
+    border-top: 1px solid var(--border-s);
+    flex-shrink: 0;
+  }
+  .sidebar-footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .sidebar-footer-text a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* ── MOBILE TOGGLE ────────────────────────────── */
+  .mobile-header {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-s);
+    z-index: 300;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+  }
+  .hamburger {
+    background: none;
+    border: 1px solid var(--border-s);
+    border-radius: 7px;
+    width: 36px; height: 36px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .hamburger span {
+    display: block;
+    width: 16px; height: 1.5px;
+    background: var(--text-page);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .mobile-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .mobile-card-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 190;
+    backdrop-filter: blur(2px);
+  }
+  .overlay.visible { display: block; }
+
+  /* ── MAIN CONTENT ─────────────────────────────── */
+  .main-content {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  main {
+    padding: 20px 28px 60px;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  /* ── CARD (always white) ──────────────────────── */
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.06);
+    overflow: hidden;
+    animation: fadeUp 0.22s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 22px 22px 18px;
+    border-bottom: 1px solid var(--border-c);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .icon-badge {
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .topic-name {
+    font-size: 21px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 120px;
+    color: var(--text);
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .badge:hover { opacity: 0.75; }
+  .badge.no-click { cursor: default; }
+  .badge.no-click:hover { opacity: 1; }
+
+  .card-body { padding: 20px 22px; }
+
+  .oneliner {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .hook-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hook-box {
+    border-left: 3px solid #D3D1C7;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+    background: #fafaf8;
+  }
+
+  .visual-wrap {
+    margin-bottom: 18px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-c);
+  }
+
+  .terms-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .term-pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .term-pill:hover { opacity: 0.8; transform: translateY(-1px); }
+  .term-pill.static { cursor: default; }
+  .term-pill.static:hover { opacity: 1; transform: none; }
+
+  .trap-box {
+    background: var(--sec);
+    border: 1px solid rgba(163,45,45,0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .trap-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sect);
+    letter-spacing: 0.04em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .trap-text {
+    font-size: 13px;
+    color: var(--sect);
+    line-height: 1.55;
+  }
+
+  .related-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-c);
+  }
+  .related-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .related-cards {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .related-card {
+    flex: 1;
+    min-width: 120px;
+    background: #f8f8f6;
+    border: 1px solid rgba(0,0,0,0.07);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .related-card:hover {
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+  .rc-icon {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+  }
+  .rc-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .rc-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  svg text { font-family: 'DM Sans', sans-serif; }
+
+  /* ── SIDEBAR SEARCH ──────────────────────────── */
+  .sidebar-search { padding: 10px 14px; border-bottom: 1px solid var(--border-s); flex-shrink: 0; }
+  .search-wrap { position: relative; }
+  .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; pointer-events: none; }
+  .search-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-s); border-radius: 7px; padding: 6px 10px 6px 26px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--text-page); outline: none; transition: border .15s; }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { border-color: var(--accent); }
+  .nav-btn.hidden { display: none; }
+
+
+  /* ── EXTRA SECTIONS ──────────────────────────── */
+  .extra-section-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin: 18px 0 6px; }
+  .extra-section-body { background: #fafaf8; border: 1px solid rgba(0,0,0,0.07); border-radius: 10px; padding: 14px 16px; margin-bottom: 4px; }
+
+
+  /* ── TOPOLOGY PAGE ───────────────────────────── */
+  .topo-page { padding: 24px 0 0; }
+  .topo-title { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .topo-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .topo-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 16px; animation: fadeUp .22s ease; }
+
+  /* ── RESPONSIVE ───────────────────────────────── */
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .mobile-header {
+      display: flex;
+    }
+    .main-content {
+      margin-left: 0;
+      padding-top: 52px;
+    }
+    main {
+      padding: 12px 16px 60px;
+    }
+
+  }
+
+  @media (max-width: 480px) {
+    .card-header {
+      padding: 16px 16px 14px;
+    }
+    .card-body {
+      padding: 16px 16px;
+    }
+    .topic-name {
+      font-size: 18px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Mobile header -->
+<div class="mobile-header" id="mobileHeader">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <span class="mobile-brand">LNS · CCNA</span>
+  <span class="mobile-card-name" id="mobileCardName"></span>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-logo">LNS</span>
+    <span class="brand-sub">CCNA 200-301 · Visual Cards</span>
+  </div>
+
+  <div class="sidebar-search">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="sidebarSearch" type="text" placeholder="Search cards…" oninput="filterNav(this.value)">
+    </div>
+  </div>
+
+  <nav class="nav-section">
+    <span class="nav-section-label">Overview</span>
+    <button class="nav-btn" onclick="showTopo()" data-id="__topo">
+      <span class="nav-icon" style="background:#E1F5EE;color:#0F6E56">MAP</span>Network Map
+    </button>
+  </nav>
+
+  <nav class="nav-section">
+    <span class="nav-section-label">Devices</span>
+    <button class="nav-btn" onclick="showCard('router')" data-id="router">
+      <span class="nav-icon" style="background:#E6F1FB;color:#185FA5">RT</span>
+      Router
+    </button>
+    <button class="nav-btn" onclick="showCard('switch')" data-id="switch">
+      <span class="nav-icon" style="background:#FAECE7;color:#993C1D">SW</span>
+      Switch
+    </button>
+    <button class="nav-btn" onclick="showCard('firewall')" data-id="firewall">
+      <span class="nav-icon" style="background:#FCEBEB;color:#A32D2D">FW</span>
+      Firewall
+    </button>
+    <button class="nav-btn" onclick="showCard('wap')" data-id="wap">
+      <span class="nav-icon" style="background:#FAEEDA;color:#854F0B">WL</span>
+      Wireless / WAP
+    </button>
+  </nav>
+
+  <nav class="nav-section">
+    <span class="nav-section-label">Concepts</span>
+    <button class="nav-btn" onclick="showCard('osi')" data-id="osi">
+      <span class="nav-icon" style="background:#EEEDFE;color:#534AB7">OS</span>
+      OSI Model
+    </button>
+    <button class="nav-btn" onclick="showCard('ip')" data-id="ip">
+      <span class="nav-icon" style="background:#E6F1FB;color:#185FA5">IP</span>
+      IP Addressing
+    </button>
+    <button class="nav-btn" onclick="showCard('ports')" data-id="ports">
+      <span class="nav-icon" style="background:#EEEDFE;color:#534AB7">PT</span>
+      Well-Known Ports
+    </button>
+  </nav>
+
+  <nav class="nav-section">
+    <span class="nav-section-label">Week 1</span>
+    <button class="nav-btn" onclick="showCard('s00l00')" data-id="s00l00">
+      <span class="nav-icon" style="background:#E6F1FB;color:#185FA5">L0</span>
+      Lesson 0
+    </button>
+    <button class="nav-btn" onclick="showCard('s00l01')" data-id="s00l01">
+      <span class="nav-icon" style="background:#FAECE7;color:#993C1D">L1</span>
+      Lesson 1
+    </button>
+    <button class="nav-btn" onclick="showCard('w1l3')" data-id="w1l3">
+      <span class="nav-icon" style="background:#FAEEDA;color:#854F0B">L3</span>
+      Lesson 3
+    </button>
+    <button class="nav-btn" onclick="showCard('w1l4')" data-id="w1l4">
+      <span class="nav-icon" style="background:#EEEDFE;color:#534AB7">L4</span>
+      Lesson 4
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-text">
+      <a href="https://lew-netsec.github.io" target="_blank">lew-netsec.github.io</a><br>
+      CCNA 200-301 Study Cards
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main-content">
+  <main id="main"></main>
+</div>
+
+<script>
+const CARDS = {
+
+  router: {
+    icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5',
+    name: 'Router',
+    layerLabel: 'Layer 3 · Network', layerBg: '#FAEEDA', layerColor: '#854F0B',
+    layerTarget: 'osi',
+    objLabel: 'Obj 1.1.c', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'Connects separate networks together and decides the best path for data to travel between them.',
+    hook: 'Like a postal sorting hub between cities — it doesn\'t care about the streets inside each city (that\'s the switch\'s job), it only knows how to get your parcel from one city to another.',
+    visual: `
+    <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:10px 0;">
+      <rect x="20" y="40" width="130" height="100" rx="8" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+      <text x="85" y="60" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="500">Network A</text>
+      <rect x="35" y="70" width="44" height="28" rx="5" fill="#fff" stroke="#B5D4F4" stroke-width="1"/>
+      <text x="57" y="88" text-anchor="middle" font-size="10" fill="#378ADD">PC</text>
+      <rect x="90" y="70" width="44" height="28" rx="5" fill="#fff" stroke="#B5D4F4" stroke-width="1"/>
+      <text x="112" y="88" text-anchor="middle" font-size="10" fill="#378ADD">PC</text>
+      <rect x="60" y="108" width="44" height="22" rx="4" fill="#185FA5"/>
+      <text x="82" y="122" text-anchor="middle" font-size="10" fill="#fff" font-weight="500">SW</text>
+      <line x1="57" y1="98" x2="75" y2="108" stroke="#B5D4F4" stroke-width="1.5"/>
+      <line x1="112" y1="98" x2="90" y2="108" stroke="#B5D4F4" stroke-width="1.5"/>
+      <rect x="210" y="65" width="140" height="50" rx="10" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+      <text x="280" y="86" text-anchor="middle" font-size="13" fill="#854F0B" font-weight="600">ROUTER</text>
+      <text x="280" y="103" text-anchor="middle" font-size="10" fill="#BA7517">routes between networks</text>
+      <rect x="410" y="40" width="130" height="100" rx="8" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="475" y="60" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="500">Network B</text>
+      <rect x="425" y="70" width="44" height="28" rx="5" fill="#fff" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="447" y="88" text-anchor="middle" font-size="10" fill="#1D9E75">PC</text>
+      <rect x="480" y="70" width="44" height="28" rx="5" fill="#fff" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="502" y="88" text-anchor="middle" font-size="10" fill="#1D9E75">PC</text>
+      <rect x="450" y="108" width="44" height="22" rx="4" fill="#0F6E56"/>
+      <text x="472" y="122" text-anchor="middle" font-size="10" fill="#fff" font-weight="500">SW</text>
+      <line x1="447" y1="98" x2="465" y2="108" stroke="#9FE1CB" stroke-width="1.5"/>
+      <line x1="502" y1="98" x2="486" y2="108" stroke="#9FE1CB" stroke-width="1.5"/>
+      <line x1="150" y1="119" x2="210" y2="90" stroke="#D3D1C7" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="410" y1="90" x2="454" y2="119" stroke="#D3D1C7" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <path d="M155 90 L205 90" stroke="#EF9F27" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+      <path d="M350 90 L405 90" stroke="#EF9F27" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+      <text x="177" y="84" text-anchor="middle" font-size="9" fill="#BA7517">packet</text>
+      <text x="376" y="84" text-anchor="middle" font-size="9" fill="#BA7517">packet</text>
+      <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0, 7 3.5, 0 7" fill="#EF9F27"/></marker></defs>
+    </svg>`,
+    terms: [
+      { label: 'Layer 3', bg: '#FAEEDA', color: '#854F0B', target: 'osi' },
+      { label: 'IP address', bg: '#E6F1FB', color: '#185FA5', target: 'ip' },
+      { label: 'routing table', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'default gateway', bg: '#E1F5EE', color: '#0F6E56' },
+      { label: 'packet', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'WAN', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'next-hop', bg: '#FAEEDA', color: '#854F0B' },
+    ],
+    trap: 'Routers do NOT connect devices within the same network — that is the switch\'s job. A router only cares about IP addresses (Layer 3), not MAC addresses. Also: your default gateway IS your router\'s IP — students often think they\'re different things.',
+    related: [
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'Layer 2 · same LAN' },
+      { id: 'ip', icon: 'IP', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'IP Addressing', desc: 'Layer 3 · addresses' },
+      { id: 'firewall', icon: 'FW', iconBg: '#FCEBEB', iconColor: '#A32D2D', name: 'Firewall', desc: 'Security · traffic control' },
+    ]
+  },
+
+  switch: {
+    icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D',
+    name: 'Switch',
+    layerLabel: 'Layer 2 · Data Link', layerBg: '#FAECE7', layerColor: '#993C1D',
+    layerTarget: 'osi',
+    objLabel: 'Obj 1.1.b', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'Connects devices inside the same local network (LAN) using MAC addresses to forward frames only to the right port.',
+    hook: 'Like a post office inside one building — it knows exactly which desk (MAC address) to deliver to, without shouting the message to the whole office.',
+    visual: `
+    <svg viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:10px 0;">
+      <rect x="185" y="60" width="150" height="44" rx="10" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1.5"/>
+      <text x="260" y="79" text-anchor="middle" font-size="13" fill="#993C1D" font-weight="600">SWITCH</text>
+      <text x="260" y="95" text-anchor="middle" font-size="10" fill="#D85A30">CAM table · MAC lookup</text>
+      <rect x="20" y="50" width="60" height="36" rx="7" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="50" y="72" text-anchor="middle" font-size="11" fill="#5F5E5A">PC A</text>
+      <rect x="20" y="105" width="60" height="36" rx="7" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="50" y="127" text-anchor="middle" font-size="11" fill="#5F5E5A">Printer</text>
+      <rect x="440" y="50" width="60" height="36" rx="7" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="470" y="72" text-anchor="middle" font-size="11" fill="#5F5E5A">PC B</text>
+      <rect x="440" y="105" width="60" height="36" rx="7" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="470" y="127" text-anchor="middle" font-size="11" fill="#5F5E5A">PC C</text>
+      <line x1="80" y1="68" x2="185" y2="75" stroke="#F5C4B3" stroke-width="1.5"/>
+      <line x1="80" y1="123" x2="185" y2="90" stroke="#D3D1C7" stroke-width="1.5"/>
+      <line x1="335" y1="75" x2="440" y2="68" stroke="#EF9F27" stroke-width="2.5"/>
+      <line x1="335" y1="90" x2="440" y2="123" stroke="#D3D1C7" stroke-width="1.5"/>
+      <text x="383" y="68" text-anchor="middle" font-size="9" fill="#BA7517">unicast ↗</text>
+    </svg>`,
+    terms: [
+      { label: 'MAC address', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'CAM table', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'Layer 2', bg: '#FAECE7', color: '#993C1D', target: 'osi' },
+      { label: 'frame', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'LAN', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'unicast', bg: '#E1F5EE', color: '#0F6E56' },
+      { label: 'broadcast', bg: '#FAEEDA', color: '#854F0B' },
+    ],
+    trap: 'A switch does NOT route between networks — that is the router\'s job. A hub broadcasts to ALL ports — a switch forwards ONLY to the correct port. Switches use MAC addresses (Layer 2), not IP addresses (Layer 3).',
+    related: [
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'Layer 3 · between networks' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'Layer 1–7 reference' },
+    ]
+  },
+
+  osi: {
+    icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7',
+    name: 'OSI Model',
+    layerLabel: 'Layers 1–7', layerBg: '#EEEDFE', layerColor: '#534AB7',
+    layerTarget: null,
+    objLabel: 'Obj 1.1', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'A 7-layer reference model that describes how data travels from an app on one device to an app on another.',
+    hook: 'Like sending a parcel internationally — each layer adds another label or box (encapsulation) as it goes down, and strips it off on the way up at the destination.',
+    visual: `
+    <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+      ${[
+        ['7','Application','#EEEDFE','#534AB7','HTTP, DNS, SMTP',        'Away',      'All'],
+        ['6','Presentation','#E8E7FD','#534AB7','SSL, Encoding',          'Pizza',     'People'],
+        ['5','Session','#DDDCFB','#3C3489','Sockets, Auth',              'Sausage',   'Seem'],
+        ['4','Transport','#E1F5EE','#0F6E56','TCP, UDP — segments',      'Throw',     'To'],
+        ['3','Network','#FAEEDA','#854F0B','IP, Routers — packets',      'Not',       'Need'],
+        ['2','Data Link','#FAECE7','#993C1D','MAC, Switches — frames',   'Do',        'Data'],
+        ['1','Physical','#F1EFE8','#5F5E5A','Cables, bits',              'Please',    'Processing'],
+      ].map(([n,name,bg,col,proto,wordUp,wordDown],i) => `
+        <rect x="10" y="${12 + i*26}" width="210" height="22" rx="4" fill="${bg}" stroke="none"/>
+        <text x="22" y="${27 + i*26}" font-size="10.5" fill="${col}" font-weight="600">L${n}</text>
+        <text x="42" y="${27 + i*26}" font-size="10.5" fill="${col}" font-weight="500">${name}</text>
+        <rect x="228" y="${12 + i*26}" width="168" height="22" rx="4" fill="#f5f4f0" stroke="none"/>
+        <text x="236" y="${27 + i*26}" font-size="9.5" fill="#888780">${proto}</text>
+        <rect x="404" y="${12 + i*26}" width="104" height="22" rx="4" fill="#E6F1FB" stroke="none"/>
+        <text x="456" y="${27 + i*26}" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">${wordUp}</text>
+        <rect x="516" y="${12 + i*26}" width="114" height="22" rx="4" fill="#E1F5EE" stroke="none"/>
+        <text x="573" y="${27 + i*26}" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="600">${wordDown}</text>
+      `).join('')}
+      <text x="110"  y="206" text-anchor="middle" font-size="9" fill="#888780">OSI layers</text>
+      <text x="312"  y="206" text-anchor="middle" font-size="9" fill="#888780">protocols / PDU</text>
+      <text x="456"  y="9"   text-anchor="middle" font-size="9" fill="#185FA5" font-weight="600">↑ bottom-up</text>
+      <text x="573"  y="9"   text-anchor="middle" font-size="9" fill="#0F6E56" font-weight="600">↓ top-down</text>
+      <text x="456"  y="206" text-anchor="middle" font-size="8" fill="#185FA5" font-weight="600">Please Do Not Throw Sausage Pizza Away</text>
+      <text x="573"  y="206" text-anchor="middle" font-size="8" fill="#0F6E56" font-weight="600">All People Seem To Need Data Processing</text>
+      <text x="150"  y="216" text-anchor="middle" font-size="9" fill="#B4B2A9">← encapsulation going down</text>
+      <text x="150"  y="206" text-anchor="middle" font-size="9" fill="#B4B2A9">← decapsulation going up</text>
+    </svg>`,
+    terms: [
+      { label: 'encapsulation', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'PDU', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'TCP/IP model', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'segment · packet · frame · bit', bg: '#F1EFE8', color: '#5F5E5A' },
+    ],
+    trap: 'The OSI model has 7 layers; TCP/IP has 4. On the exam "Layer 3 device" = router; "Layer 2 device" = switch. Please Don\'t Throw Sausage Pizza Away — mnemonic for layers 1–7 bottom-up.',
+    related: [
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'Layer 3 device' },
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'Layer 2 device' },
+    ]
+  },
+
+  ip: {
+    icon: 'IP', iconBg: '#E6F1FB', iconColor: '#185FA5',
+    name: 'IP Addressing',
+    layerLabel: 'Layer 3 · Network', layerBg: '#FAEEDA', layerColor: '#854F0B',
+    layerTarget: 'osi',
+    objLabel: 'Obj 1.6', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'A logical address assigned to every device on a network so routers know where to send packets.',
+    hook: 'Like a full postal address — the street number is the host, the suburb is the network. The subnet mask tells you where the suburb ends and the house number begins.',
+    visual: `
+    <svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+      <text x="260" y="28" text-anchor="middle" font-size="18" font-weight="600" fill="#378ADD" font-family="DM Mono, monospace">192.168.1.42</text>
+      <rect x="30" y="40" width="220" height="32" rx="6" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+      <text x="140" y="60" text-anchor="middle" font-size="12" fill="#185FA5" font-weight="500">192.168.1  — Network part</text>
+      <rect x="260" y="40" width="230" height="32" rx="6" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="375" y="60" text-anchor="middle" font-size="12" fill="#0F6E56" font-weight="500">.42  — Host part</text>
+      <text x="140" y="92" text-anchor="middle" font-size="10" fill="#888780">Subnet mask 255.255.255.0</text>
+      <text x="140" y="108" text-anchor="middle" font-size="10" fill="#888780">tells you the split →</text>
+      <text x="375" y="92" text-anchor="middle" font-size="10" fill="#888780">Unique device ID</text>
+      <text x="375" y="108" text-anchor="middle" font-size="10" fill="#888780">on that network</text>
+      <line x1="250" y1="38" x2="250" y2="75" stroke="#D3D1C7" stroke-width="1.5" stroke-dasharray="4,3"/>
+    </svg>`,
+    terms: [
+      { label: 'IPv4', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'subnet mask', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'default gateway', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'private vs public', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'CIDR /24', bg: '#F1EFE8', color: '#5F5E5A' },
+    ],
+    trap: 'The default gateway is always the router\'s IP on your subnet — not a separate device. Also: 192.168.x.x, 10.x.x.x, 172.16–31.x.x are PRIVATE — they cannot route on the internet without NAT.',
+    related: [
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'routes between networks' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'Layer 3 context' },
+    ]
+  },
+
+  firewall: {
+    icon: 'FW', iconBg: '#FCEBEB', iconColor: '#A32D2D',
+    name: 'Firewall',
+    layerLabel: 'Security / L3–L7', layerBg: '#FCEBEB', layerColor: '#A32D2D',
+    layerTarget: 'osi',
+    objLabel: 'Obj 1.1.d', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'Inspects traffic entering and leaving a network and blocks anything that doesn\'t match the allowed rules.',
+    hook: 'Like a bouncer at a club — checks your ID (IP, port, protocol) against the guest list (ACL rules). No match? You\'re not getting in.',
+    visual: `
+    <svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+      <rect x="20" y="50" width="80" height="40" rx="7" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+      <text x="60" y="74" text-anchor="middle" font-size="11" fill="#185FA5">Internet</text>
+      <rect x="420" y="50" width="80" height="40" rx="7" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+      <text x="460" y="74" text-anchor="middle" font-size="11" fill="#0F6E56">LAN</text>
+      <rect x="200" y="30" width="120" height="80" rx="10" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1.5"/>
+      <text x="260" y="58" text-anchor="middle" font-size="12" fill="#A32D2D" font-weight="600">FIREWALL</text>
+      <text x="260" y="74" text-anchor="middle" font-size="9" fill="#791F1F">inspect · allow · deny</text>
+      <text x="260" y="89" text-anchor="middle" font-size="9" fill="#791F1F">ACL rules</text>
+      <path d="M100 70 L195 70" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#ba)"/>
+      <path d="M325 70 L415 70" stroke="#1D9E75" stroke-width="2" fill="none" marker-end="url(#ga)"/>
+      <text x="145" y="63" text-anchor="middle" font-size="9" fill="#378ADD">traffic in</text>
+      <text x="370" y="63" text-anchor="middle" font-size="9" fill="#1D9E75">allowed out</text>
+      <line x1="220" y1="115" x2="220" y2="125" stroke="#E24B4A" stroke-width="2"/>
+      <text x="245" y="126" font-size="9" fill="#A32D2D">blocked traffic dropped ↓</text>
+      <defs>
+        <marker id="ba" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#378ADD"/></marker>
+        <marker id="ga" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><polygon points="0 0,7 3.5,0 7" fill="#1D9E75"/></marker>
+      </defs>
+    </svg>`,
+    terms: [
+      { label: 'ACL', bg: '#FCEBEB', color: '#A32D2D' },
+      { label: 'stateful inspection', bg: '#FCEBEB', color: '#A32D2D' },
+      { label: 'DMZ', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'ingress / egress', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'deny any any', bg: '#FCEBEB', color: '#A32D2D' },
+    ],
+    trap: 'Firewalls are NOT routers — they don\'t route between networks by default. ACLs on routers are NOT the same as a full firewall. A stateful firewall tracks connection state; a stateless one just matches packet headers.',
+    related: [
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'routes, not filters' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'L3–L7 inspection' },
+    ]
+  },
+
+  wap: {
+    icon: 'WL', iconBg: '#FAEEDA', iconColor: '#854F0B',
+    name: 'Wireless / WAP',
+    layerLabel: 'Wireless · L1–L2', layerBg: '#FAEEDA', layerColor: '#854F0B',
+    layerTarget: 'osi',
+    objLabel: 'Obj 2.4', objBg: '#E1F5EE', objColor: '#0F6E56',
+    oneliner: 'A wireless access point broadcasts a wired network over radio waves so devices can join without cables.',
+    hook: 'Like a radio station transmitter for your LAN — devices tune in on the right frequency (channel/SSID) to join the network.',
+    visual: `
+    <svg viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+      <rect x="215" y="50" width="90" height="40" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+      <text x="260" y="74" text-anchor="middle" font-size="12" fill="#854F0B" font-weight="600">WAP</text>
+      <path d="M260 48 Q260 20 230 10" stroke="#FAC775" stroke-width="1.5" fill="none"/>
+      <path d="M260 48 Q260 15 215 5" stroke="#FAC775" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+      <path d="M260 48 Q260 20 290 10" stroke="#FAC775" stroke-width="1.5" fill="none"/>
+      <path d="M260 48 Q260 15 305 5" stroke="#FAC775" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+      <rect x="30" y="90" width="60" height="34" rx="6" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="60" y="111" text-anchor="middle" font-size="10" fill="#5F5E5A">Phone</text>
+      <rect x="140" y="90" width="60" height="34" rx="6" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="170" y="111" text-anchor="middle" font-size="10" fill="#5F5E5A">Laptop</text>
+      <rect x="320" y="90" width="60" height="34" rx="6" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="350" y="111" text-anchor="middle" font-size="10" fill="#5F5E5A">Tablet</text>
+      <rect x="430" y="90" width="60" height="34" rx="6" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="460" y="111" text-anchor="middle" font-size="10" fill="#5F5E5A">PC</text>
+      <line x1="60" y1="90" x2="230" y2="70" stroke="#FAC775" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="170" y1="90" x2="245" y2="70" stroke="#FAC775" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="350" y1="90" x2="275" y2="70" stroke="#FAC775" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="460" y1="90" x2="290" y2="70" stroke="#FAC775" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="260" y1="90" x2="260" y2="135" stroke="#D3D1C7" stroke-width="1.5"/>
+      <text x="260" y="148" text-anchor="middle" font-size="9" fill="#888780">wired uplink to switch/router</text>
+    </svg>`,
+    terms: [
+      { label: 'SSID', bg: '#FAEEDA', color: '#854F0B' },
+      { label: '2.4 GHz vs 5 GHz', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'WPA2 / WPA3', bg: '#FCEBEB', color: '#A32D2D' },
+      { label: 'BSS / ESS', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'channel overlap', bg: '#FAEEDA', color: '#854F0B' },
+    ],
+    trap: 'A WAP is NOT a router. It just extends your wired network wirelessly. At home your router box often has a WAP built in — in enterprise they are always separate devices. Non-overlapping 2.4 GHz channels are 1, 6, 11.',
+    related: [
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'connects networks' },
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'wired LAN backbone' },
+    ]
+  },
+
+  s00l00: {
+    icon: 'L0', iconBg: '#E6F1FB', iconColor: '#185FA5',
+    name: 'What is a Network?',
+    layerLabel: 'Foundational', layerBg: '#E6F1FB', layerColor: '#185FA5',
+    layerTarget: null,
+    objLabel: 'Week 1 · Lesson 0', objBg: '#F1EFE8', objColor: '#5F5E5A',
+    oneliner: 'Devices talking to each other, sharing data from point A to point B — starting with two computers and scaling to the entire internet.',
+    hook: 'Firing a shot in an online game — your packet leaves your device, crosses your home network, hits the internet, finds a remote server, then reaches another player. One action. Massive chain.',
+    visual: `<style>
+  @keyframes l0-hop1 { 0%,100%{opacity:0;transform:translateX(0)}  8%{opacity:1} 22%{opacity:1;transform:translateX(58px)}  24%{opacity:0;transform:translateX(58px)} }
+  @keyframes l0-hop2 { 0%,24%,100%{opacity:0;transform:translateX(0)} 32%{opacity:1} 46%{opacity:1;transform:translateX(58px)} 48%{opacity:0} }
+  @keyframes l0-hop3 { 0%,48%,100%{opacity:0;transform:translateX(0)} 56%{opacity:1} 70%{opacity:1;transform:translateX(58px)} 72%{opacity:0} }
+  @keyframes l0-hop4 { 0%,72%,100%{opacity:0;transform:translateX(0)} 80%{opacity:1} 92%{opacity:1;transform:translateX(52px)} 94%{opacity:0} }
+  @keyframes l0-glow { 0%,100%{opacity:0.5;stroke-width:1} 50%{opacity:1;stroke-width:2} }
+  @keyframes l0-node-flash { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  @keyframes l0-label { 0%,100%{opacity:0} 15%{opacity:1} 85%{opacity:1} }
+</style>
+<svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+  <defs>
+    <marker id="l0arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><polygon points="0 0,6 3,0 6" fill="#D3D1C7"/></marker>
+  </defs>
+
+  <!-- static wires -->
+  <line x1="76" y1="83" x2="104" y2="83" stroke="#D3D1C7" stroke-width="1.5" marker-end="url(#l0arr)"/>
+  <line x1="168" y1="83" x2="196" y2="83" stroke="#D3D1C7" stroke-width="1.5" marker-end="url(#l0arr)"/>
+  <line x1="262" y1="83" x2="284" y2="83" stroke="#D3D1C7" stroke-width="1.5" marker-end="url(#l0arr)"/>
+  <line x1="378" y1="83" x2="404" y2="83" stroke="#D3D1C7" stroke-width="1.5" marker-end="url(#l0arr)"/>
+  <line x1="468" y1="83" x2="494" y2="83" stroke="#D3D1C7" stroke-width="1.5" marker-end="url(#l0arr)"/>
+
+  <!-- nodes -->
+  <rect x="10"  y="65" width="66" height="36" rx="7" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1.2"/>
+  <text x="43"  y="81" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Your PC</text>
+  <text x="43"  y="94" text-anchor="middle" font-size="8"  fill="#378ADD">10.1.1.10</text>
+
+  <rect x="104" y="65" width="64" height="36" rx="7" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1.2"/>
+  <text x="136" y="81" text-anchor="middle" font-size="10" fill="#993C1D" font-weight="600">Switch</text>
+  <text x="136" y="94" text-anchor="middle" font-size="8"  fill="#D85A30">L2 · LAN</text>
+
+  <rect x="196" y="65" width="66" height="36" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.2"/>
+  <text x="229" y="81" text-anchor="middle" font-size="10" fill="#854F0B" font-weight="600">Router</text>
+  <text x="229" y="94" text-anchor="middle" font-size="8"  fill="#BA7517">L3 · WAN</text>
+
+  <ellipse cx="330" cy="83" rx="48" ry="28" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.2"/>
+  <text x="330" y="79" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="600">Internet</text>
+  <text x="330" y="92" text-anchor="middle" font-size="8"  fill="#888780">routers × routers</text>
+
+  <rect x="404" y="65" width="64" height="36" rx="7" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1.2"/>
+  <text x="436" y="81" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="600">Server</text>
+  <text x="436" y="94" text-anchor="middle" font-size="8"  fill="#1D9E75">remote</text>
+
+  <rect x="494" y="65" width="54" height="36" rx="7" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1.2"/>
+  <text x="521" y="81" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="600">Player 2</text>
+  <text x="521" y="94" text-anchor="middle" font-size="8"  fill="#7F77DD">online</text>
+
+  <!-- animated packet hop 1: PC → Switch -->
+  <g style="animation:l0-hop1 6s ease-in-out infinite">
+    <rect x="78" y="75" width="40" height="14" rx="3" fill="#EF9F27"/>
+    <text x="98" y="85" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">packet</text>
+  </g>
+  <!-- hop 2: Switch → Router -->
+  <g style="animation:l0-hop2 6s ease-in-out infinite">
+    <rect x="170" y="75" width="40" height="14" rx="3" fill="#EF9F27"/>
+    <text x="190" y="85" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">packet</text>
+  </g>
+  <!-- hop 3: Router → Internet → Server -->
+  <g style="animation:l0-hop3 6s ease-in-out infinite">
+    <rect x="266" y="75" width="40" height="14" rx="3" fill="#EF9F27"/>
+    <text x="286" y="85" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">packet</text>
+  </g>
+  <!-- hop 4: Server → Player 2 -->
+  <g style="animation:l0-hop4 6s ease-in-out infinite">
+    <rect x="408" y="75" width="40" height="14" rx="3" fill="#534AB7"/>
+    <text x="428" y="85" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">packet</text>
+  </g>
+
+  <!-- animated label -->
+  <text x="280" y="128" text-anchor="middle" font-size="9" fill="#BA7517" style="animation:l0-label 6s ease-in-out infinite">one action · every device plays its part · end-to-end delivery</text>
+
+  <!-- home vs enterprise comparison -->
+  <rect x="10"  y="142" width="260" height="46" rx="7" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+  <text x="140" y="158" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Home network</text>
+  <text x="140" y="172" text-anchor="middle" font-size="9"  fill="#378ADD">One box = modem + router + switch + WAP</text>
+  <text x="140" y="184" text-anchor="middle" font-size="9"  fill="#378ADD">All four jobs, one device</text>
+
+  <rect x="280" y="142" width="270" height="46" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+  <text x="415" y="158" text-anchor="middle" font-size="10" fill="#854F0B" font-weight="600">Enterprise network</text>
+  <text x="415" y="172" text-anchor="middle" font-size="9"  fill="#BA7517">Dedicated router · dedicated switch · dedicated WAP</text>
+  <text x="415" y="184" text-anchor="middle" font-size="9"  fill="#BA7517">Separate devices · more control · more power</text>
+</svg>`,
+    terms: [
+      { label: 'packet', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'switch', bg: '#FAECE7', color: '#993C1D', target: 'switch' },
+      { label: 'router', bg: '#FAEEDA', color: '#854F0B', target: 'router' },
+      { label: 'firewall', bg: '#FCEBEB', color: '#A32D2D', target: 'firewall' },
+      { label: 'WAP', bg: '#FAEEDA', color: '#854F0B', target: 'wap' },
+      { label: 'LAN', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'internet', bg: '#F1EFE8', color: '#5F5E5A' },
+    ],
+    trap: 'A switch connects devices WITHIN one network. A router connects BETWEEN networks. The internet is not a cloud — it\'s millions of interconnected networks joined by routers. At home one box does all four jobs; in enterprise each is a separate dedicated device.',
+    related: [
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'L2 · same LAN' },
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'L3 · between networks' },
+      { id: 'firewall', icon: 'FW', iconBg: '#FCEBEB', iconColor: '#A32D2D', name: 'Firewall', desc: 'allows good · blocks bad' },
+      { id: 'wap', icon: 'WL', iconBg: '#FAEEDA', iconColor: '#854F0B', name: 'Wireless / WAP', desc: 'wireless access' },
+    ]
+  },
+
+  s00l01: {
+    icon: 'L1', iconBg: '#FAECE7', iconColor: '#993C1D',
+    name: 'What is a Switch?',
+    layerLabel: 'Layer 2 · Data Link', layerBg: '#FAECE7', layerColor: '#993C1D',
+    layerTarget: 'osi',
+    objLabel: 'Week 1 · Lesson 1', objBg: '#F1EFE8', objColor: '#5F5E5A',
+    oneliner: 'A switch connects devices on a local network and sends traffic only to the correct port — not everyone — using MAC addresses stored in a CAM table.',
+    hook: 'The switch is like a smart post office inside one building. A hub shouts your mail across the entire floor. A switch walks it directly to the right desk — nobody else hears a thing.',
+    visual: `<style>
+  /* HUB side — flood bursts to all three devices simultaneously */
+  @keyframes hub-send   { 0%,100%{opacity:0} 10%{opacity:1} 40%{opacity:1} 55%{opacity:0} }
+  @keyframes hub-flood1 { 0%,100%{opacity:0;transform:translate(0,0)}   10%{opacity:1} 42%{opacity:1;transform:translate(-52px,18px)}  44%{opacity:0} }
+  @keyframes hub-flood2 { 0%,100%{opacity:0;transform:translate(0,0)}   10%{opacity:1} 42%{opacity:1;transform:translate(0px,18px)}    44%{opacity:0} }
+  @keyframes hub-flood3 { 0%,100%{opacity:0;transform:translate(0,0)}   10%{opacity:1} 42%{opacity:1;transform:translate(52px,18px)}   44%{opacity:0} }
+  @keyframes hub-noise  { 0%,44%,100%{opacity:0} 50%{opacity:1} 70%{opacity:1} 80%{opacity:0} }
+
+  /* SWITCH side — unicast only to Mark */
+  @keyframes sw-send    { 0%,55%,100%{opacity:0;transform:translate(0,0)} 65%{opacity:1} 88%{opacity:1;transform:translate(-18px,18px)} 92%{opacity:0} }
+  @keyframes sw-cam     { 0%,55%,100%{opacity:0.3} 70%{opacity:1} 90%{opacity:1} }
+  @keyframes sw-idle1   { 0%,55%,100%{opacity:0} 62%{opacity:0.4} 95%{opacity:0.4} }
+  @keyframes sw-idle2   { 0%,55%,100%{opacity:0} 62%{opacity:0.4} 95%{opacity:0.4} }
+  @keyframes sw-mark-glow { 0%,55%,100%{stroke:#9FE1CB;stroke-width:1} 75%{stroke:#1D9E75;stroke-width:2.5} 92%{stroke:#1D9E75;stroke-width:2.5} }
+</style>
+<svg viewBox="0 0 560 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:8px 0;">
+
+  <!-- ── DIVIDER ── -->
+  <line x1="278" y1="8" x2="278" y2="222" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="5,3"/>
+
+  <!-- ══ HUB SIDE (left) ══ -->
+  <text x="136" y="18" text-anchor="middle" font-size="11" fill="#A32D2D" font-weight="600">HUB — floods every port</text>
+
+  <!-- Hub box -->
+  <rect x="98" y="26" width="76" height="30" rx="7" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1.5"/>
+  <text x="136" y="45" text-anchor="middle" font-size="11" fill="#A32D2D" font-weight="600">HUB</text>
+
+  <!-- Static wires hub → devices -->
+  <line x1="110" y1="56" x2="38"  y2="76" stroke="#F5C4B3" stroke-width="1.2"/>
+  <line x1="136" y1="56" x2="136" y2="76" stroke="#F5C4B3" stroke-width="1.2"/>
+  <line x1="162" y1="56" x2="234" y2="76" stroke="#F5C4B3" stroke-width="1.2"/>
+
+  <!-- Johnny (sender) -->
+  <rect x="6"   y="76" width="64" height="28" rx="5" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1.2"/>
+  <text x="38"  y="94" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Johnny</text>
+
+  <!-- Mark (target ✓) -->
+  <rect x="104" y="76" width="64" height="28" rx="5" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="136" y="94" text-anchor="middle" font-size="10" fill="#5F5E5A">Mark ✓</text>
+
+  <!-- Lisa (bystander ✗) -->
+  <rect x="202" y="76" width="64" height="28" rx="5" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="234" y="94" text-anchor="middle" font-size="10" fill="#5F5E5A">Lisa ✗</text>
+
+  <!-- Animated flood packets from hub to all three -->
+  <g style="animation:hub-send 5s ease-in-out infinite">
+    <rect x="118" y="60" width="36" height="13" rx="3" fill="#E24B4A"/>
+    <text x="136" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">FLOOD</text>
+  </g>
+  <g style="animation:hub-flood1 5s ease-in-out infinite">
+    <rect x="118" y="60" width="36" height="13" rx="3" fill="#E24B4A" opacity="0.85"/>
+    <text x="136" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">copy</text>
+  </g>
+  <g style="animation:hub-flood2 5s ease-in-out infinite">
+    <rect x="118" y="60" width="36" height="13" rx="3" fill="#E24B4A" opacity="0.85"/>
+    <text x="136" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">copy</text>
+  </g>
+  <g style="animation:hub-flood3 5s ease-in-out infinite">
+    <rect x="118" y="60" width="36" height="13" rx="3" fill="#E24B4A" opacity="0.85"/>
+    <text x="136" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">copy</text>
+  </g>
+
+  <!-- Noise/collision indicator -->
+  <g style="animation:hub-noise 5s ease-in-out infinite">
+    <rect x="60" y="112" width="154" height="18" rx="4" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+    <text x="137" y="125" text-anchor="middle" font-size="9" fill="#A32D2D" font-weight="500">⚡ collision domain — everyone hears everything</text>
+  </g>
+
+  <!-- ══ SWITCH SIDE (right) ══ -->
+  <text x="418" y="18" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="600">SWITCH — unicast to correct port only</text>
+
+  <!-- Switch box -->
+  <rect x="380" y="26" width="76" height="30" rx="7" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1.5"/>
+  <text x="418" y="45" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="600">SWITCH</text>
+
+  <!-- Static wires switch → devices -->
+  <line x1="392" y1="56" x2="320" y2="76" stroke="#D3D1C7" stroke-width="1.2"/>
+  <line x1="418" y1="56" x2="418" y2="76" stroke="#D3D1C7" stroke-width="1.2"/>
+  <line x1="444" y1="56" x2="516" y2="76" stroke="#D3D1C7" stroke-width="1.2"/>
+
+  <!-- Johnny (sender) -->
+  <rect x="288" y="76" width="64" height="28" rx="5" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1.2"/>
+  <text x="320" y="94" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">Johnny</text>
+
+  <!-- Mark (target — glows on delivery) -->
+  <rect x="386" y="76" width="64" height="28" rx="5" fill="#E1F5EE" style="animation:sw-mark-glow 5s ease-in-out infinite"/>
+  <text x="418" y="94" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="600">Mark ✓</text>
+
+  <!-- Lisa — stays dim -->
+  <rect x="484" y="76" width="64" height="28" rx="5" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="516" y="94" text-anchor="middle" font-size="10" fill="#5F5E5A">Lisa</text>
+
+  <!-- Unicast packet: Johnny → Switch → Mark only -->
+  <g style="animation:sw-send 5s ease-in-out infinite">
+    <rect x="400" y="60" width="36" height="13" rx="3" fill="#1D9E75"/>
+    <text x="418" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">unicast</text>
+  </g>
+
+  <!-- Idle indicators on Lisa port (switch suppresses it) -->
+  <g style="animation:sw-idle1 5s ease-in-out infinite">
+    <line x1="444" y1="58" x2="516" y2="76" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- CAM table panel (glows during lookup) -->
+  <rect x="288" y="118" width="260" height="78" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1" style="animation:sw-cam 5s ease-in-out infinite"/>
+  <text x="418" y="135" text-anchor="middle" font-size="10" fill="#854F0B" font-weight="600">CAM Table — switch memory</text>
+  <text x="300" y="150" font-size="9" fill="#854F0B" font-family="monospace">AA:BB:CC:DD:EE:01  →  Port 1 (Johnny)</text>
+  <text x="300" y="163" font-size="9" fill="#854F0B" font-family="monospace">AA:BB:CC:DD:EE:02  →  Port 2 (Mark)</text>
+  <text x="300" y="176" font-size="9" fill="#854F0B" font-family="monospace">AA:BB:CC:DD:EE:03  →  Port 3 (Lisa)</text>
+  <text x="300" y="189" font-size="9" fill="#BA7517" font-style="italic">show mac-address-table  ← Cisco CLI to inspect</text>
+
+  <!-- Bottom comparison bar -->
+  <rect x="6"   y="206" width="265" height="18" rx="4" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+  <text x="138" y="219" text-anchor="middle" font-size="9" fill="#A32D2D">Hub: one collision domain · all devices compete for bandwidth</text>
+  <rect x="288" y="206" width="265" height="18" rx="4" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+  <text x="420" y="219" text-anchor="middle" font-size="9" fill="#0F6E56">Switch: each port its own collision domain · full-duplex per device</text>
+</svg>`,
+    terms: [
+      { label: 'CAM table', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'MAC address', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'Layer 2', bg: '#FAECE7', color: '#993C1D', target: 'osi' },
+      { label: 'frame', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'unicast', bg: '#E1F5EE', color: '#0F6E56' },
+      { label: 'hub (flood)', bg: '#FCEBEB', color: '#A32D2D' },
+      { label: 'LAN', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'Ethernet', bg: '#F1EFE8', color: '#5F5E5A' },
+    ],
+    trap: 'A switch uses MAC addresses (Layer 2) — NOT IP addresses (Layer 3). A hub floods every port; a switch forwards only to the correct port. At Layer 2 the message is called a FRAME, not a packet. Wireless behaves like a shared medium — more like a hub — which is why wired Ethernet beats Wi-Fi for critical devices.',
+    related: [
+      { id: 's00l00', icon: 'L0', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Lesson 0 · What is a Network?', desc: 'where the switch fits in' },
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'traffic between networks' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'Layer 2 context' },
+    ]
+  },
+
+  ports: {
+    icon: 'PT', iconBg: '#EEEDFE', iconColor: '#534AB7',
+    name: 'Well-Known Ports',
+    layerLabel: 'Layer 4 · Transport', layerBg: '#E1F5EE', layerColor: '#0F6E56',
+    layerTarget: 'osi',
+    objLabel: 'Obj 1.5 · 2.8 · 4.8 · 4.9', objBg: '#E1F5EE', objColor: '#0F6E56',
+    customRender: true,
+    tcpudp: [
+      { proto: 'TCP', bg: '#E6F1FB', color: '#0C447C', desc: 'Reliable · connection-oriented · handshake before data · slower', services: 'HTTP, HTTPS, SSH, Telnet, FTP, SMTP, POP3, IMAP, TACACS+' },
+      { proto: 'UDP', bg: '#E1F5EE', color: '#085041', desc: 'Fast · connectionless · no guarantee · lower overhead', services: 'DNS (queries), DHCP, TFTP, NTP, SNMP, Syslog, RADIUS' },
+    ],
+    groups: [
+      {
+        label: 'Web & Device Management (Obj 2.8)',
+        rows: [
+          { port: '22',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'SSH',        note: 'Encrypted CLI — Obj 4.8. Configure with crypto key generate rsa' },
+          { port: '23',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'Telnet',     note: 'Unencrypted CLI — plaintext password visible on wire' },
+          { port: '80',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'HTTP',       note: 'Web + Cisco device GUI management (unencrypted)' },
+          { port: '443',  proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'HTTPS',      note: 'Web + Cisco device GUI management (encrypted TLS)' },
+        ]
+      },
+      {
+        label: 'File Transfer (Obj 4.9)',
+        rows: [
+          { port: '20',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'FTP Data',    note: 'Active mode data channel — reliable, authenticated' },
+          { port: '21',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'FTP Control', note: 'Commands & login — use for general file transfer' },
+          { port: '69',   proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'TFTP',        note: 'No auth, no reliability — used only for IOS image/config transfers on trusted LAN' },
+        ]
+      },
+      {
+        label: 'Email',
+        rows: [
+          { port: '25',   proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'SMTP',   note: 'Sending email (server to server)' },
+          { port: '110',  proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'POP3',   note: 'Download & delete from server' },
+          { port: '143',  proto: 'TCP',     protoBg: '#E6F1FB', protoColor: '#185FA5', name: 'IMAP',   note: 'Sync email — stays on server' },
+        ]
+      },
+      {
+        label: 'Network Services (Obj 4.2 · 4.3 · 4.6)',
+        rows: [
+          { port: '53',   proto: 'TCP/UDP', protoBg: '#FAEEDA', protoColor: '#854F0B', name: 'DNS',          note: 'UDP for queries · TCP for zone transfers (>512 bytes)' },
+          { port: '67',   proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'DHCP Server',  note: 'Server listens here — Obj 4.6 relay/client config' },
+          { port: '68',   proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'DHCP Client',  note: 'Client receives offers here' },
+          { port: '123',  proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'NTP',          note: 'Clock sync — Obj 4.2 configure client & server mode' },
+        ]
+      },
+      {
+        label: 'Network Management (Obj 4.4 · 4.5)',
+        rows: [
+          { port: '161',  proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'SNMP',       note: 'Manager polls agent — GET/SET requests (Obj 4.4)' },
+          { port: '162',  proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'SNMP Trap',  note: 'Agent pushes unsolicited alert to manager' },
+          { port: '514',  proto: 'UDP',     protoBg: '#E1F5EE', protoColor: '#0F6E56', name: 'Syslog',     note: 'Device logs to syslog server — severity 0–7 (Obj 4.5)' },
+        ]
+      },
+      {
+        label: 'AAA & Security (Obj 2.8 · 5.8)',
+        rows: [
+          { port: '49',   proto: 'TCP',     protoBg: '#FCEBEB', protoColor: '#A32D2D', name: 'TACACS+',       note: 'Cisco AAA — encrypts entire payload · separates auth/author/acct' },
+          { port: '1812', proto: 'UDP',     protoBg: '#FCEBEB', protoColor: '#A32D2D', name: 'RADIUS Auth',   note: 'IETF AAA — encrypts password only · combines author+acct' },
+          { port: '1813', proto: 'UDP',     protoBg: '#FCEBEB', protoColor: '#A32D2D', name: 'RADIUS Acct',   note: 'RADIUS accounting port' },
+          { port: '500',  proto: 'UDP',     protoBg: '#FCEBEB', protoColor: '#A32D2D', name: 'IKE / ISAKMP',  note: 'IPsec VPN key negotiation (Obj 5.5)' },
+        ]
+      },
+    ],
+    traps: [
+      'FTP: 20 = data channel, 21 = control/commands. Easy to swap under pressure.',
+      'DNS is BOTH TCP and UDP on 53 — UDP for normal queries, TCP for zone transfers only.',
+      'DHCP: 67 = server, 68 = client. The server does NOT use 68.',
+      'TFTP (69) is UDP with zero authentication — never use on untrusted networks. FTP is TCP and requires login.',
+      'SSH (22) is Obj 4.8 — you must know the config: ip domain-name, crypto key generate rsa, line vty transport input ssh.',
+      'HTTP (80) and HTTPS (443) are not just web — Cisco devices use them for GUI management access (Obj 2.8).',
+      'TACACS+ (TCP 49) encrypts the whole packet. RADIUS (UDP 1812/1813) only encrypts the password. TACACS+ is Cisco proprietary; RADIUS is open standard.',
+      'SNMP: 161 = manager polls agent, 162 = agent sends trap to manager. Direction is a favourite trick question.',
+      'Syslog severity levels 0–7: 0=Emergency, 7=Debugging. Lower number = more critical.',
+    ],
+    related: [
+      { id: 'firewall', icon: 'FW', iconBg: '#FCEBEB', iconColor: '#A32D2D', name: 'Firewall', desc: 'ACLs filter by port' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'Layer 4 context' },
+    ]
+  },
+
+  w1l3: {
+    icon: 'L3', iconBg: '#FAEEDA', iconColor: '#854F0B',
+    name: 'What is a Router — Really?',
+    layerLabel: 'Layer 3 · Network', layerBg: '#FAEEDA', layerColor: '#854F0B',
+    layerTarget: 'osi',
+    objLabel: 'Week 1 · Lesson 3', objBg: '#F1EFE8', objColor: '#5F5E5A',
+    oneliner: 'A router connects separate IP networks together, makes Layer 3 forwarding decisions using a routing table, and rewraps traffic in fresh Layer 2 frames at every hop.',
+    hook: 'Same envelope, different van. The IP destination stays identical from source to destination (Layer 3 never changes). But the courier van — the Layer 2 frame — is swapped for a fresh one at every router along the way.',
+    visual: `<style>
+  @keyframes pkt-move-1 { 0%,100%{opacity:0;transform:translateX(0)} 10%{opacity:1} 40%{opacity:1;transform:translateX(98px)} 41%{opacity:0;transform:translateX(98px)} }
+  @keyframes pkt-move-2 { 0%,45%,100%{opacity:0;transform:translateX(0)} 55%{opacity:1} 85%{opacity:1;transform:translateX(96px)} 86%{opacity:0} }
+  @keyframes arp-pulse   { 0%,100%{opacity:0} 15%{opacity:1} 35%{opacity:1} 45%{opacity:0} }
+  @keyframes arp-pulse2  { 0%,50%,100%{opacity:0} 60%{opacity:1} 80%{opacity:1} 90%{opacity:0} }
+  @keyframes rt-glow     { 0%,100%{opacity:0.35} 50%{opacity:1} }
+  @keyframes label-in    { 0%,100%{opacity:0.2} 40%{opacity:1} 60%{opacity:1} }
+  @keyframes frame-swap  { 0%,38%{fill:#B5D4F4} 42%,100%{fill:#9FE1CB} }
+</style>
+<svg viewBox="0 0 620 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;padding:10px 0;">
+
+  <!-- ── Network A (left) ── -->
+  <rect x="10" y="30" width="170" height="180" rx="10" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1.2"/>
+  <text x="95" y="52" text-anchor="middle" font-size="11" fill="#185FA5" font-weight="600">Network A · 10.1.1.x</text>
+
+  <!-- Johnny PC -->
+  <rect x="25" y="62" width="64" height="36" rx="6" fill="#fff" stroke="#B5D4F4" stroke-width="1"/>
+  <text x="57" y="78" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="500">Johnny</text>
+  <text x="57" y="91" text-anchor="middle" font-size="9" fill="#378ADD">10.1.1.10</text>
+
+  <!-- Switch A -->
+  <rect x="50" y="128" width="90" height="26" rx="5" fill="#185FA5"/>
+  <text x="95" y="145" text-anchor="middle" font-size="10" fill="#fff" font-weight="500">Switch</text>
+
+  <!-- Wire Johnny → Switch -->
+  <line x1="57" y1="98" x2="88" y2="128" stroke="#B5D4F4" stroke-width="1.5"/>
+
+  <!-- Wire Switch → Router left -->
+  <line x1="140" y1="141" x2="220" y2="141" stroke="#B5D4F4" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+  <!-- Default gateway note -->
+  <text x="95" y="195" text-anchor="middle" font-size="9" fill="#185FA5" font-style="italic">default gateway: 10.1.1.1</text>
+
+  <!-- ARP bubble A (Johnny→Router MAC) -->
+  <g style="animation:arp-pulse 4s ease-in-out infinite">
+    <rect x="28" y="105" width="120" height="17" rx="4" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+    <text x="88" y="117" text-anchor="middle" font-size="9" fill="#854F0B">ARP: who is 10.1.1.1?</text>
+  </g>
+
+  <!-- ── Router (centre) ── -->
+  <rect x="220" y="100" width="180" height="82" rx="12" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.8"/>
+  <text x="310" y="125" text-anchor="middle" font-size="13" fill="#854F0B" font-weight="700">ROUTER</text>
+
+  <!-- Router interfaces -->
+  <rect x="228" y="133" width="68" height="20" rx="4" fill="#854F0B"/>
+  <text x="262" y="147" text-anchor="middle" font-size="9" fill="#fff">eth0 10.1.1.1</text>
+  <rect x="324" y="133" width="68" height="20" rx="4" fill="#0F6E56"/>
+  <text x="358" y="147" text-anchor="middle" font-size="9" fill="#fff">eth1 23.1.1.1</text>
+
+  <!-- Routing table panel -->
+  <rect x="228" y="158" width="164" height="18" rx="3" fill="#fff7ed" stroke="#FAC775" stroke-width="0.8"/>
+  <text x="310" y="171" text-anchor="middle" font-size="9" fill="#854F0B" style="animation:rt-glow 3s ease-in-out infinite">Routing Table: 10.1.1.x→eth0 · 23.x→eth1</text>
+
+  <!-- ── Network B (right) ── -->
+  <rect x="440" y="30" width="170" height="180" rx="10" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1.2"/>
+  <text x="525" y="52" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="600">Network B · 23.1.1.x</text>
+
+  <!-- Coffee server -->
+  <rect x="531" y="62" width="64" height="36" rx="6" fill="#fff" stroke="#9FE1CB" stroke-width="1"/>
+  <text x="563" y="78" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="500">☕ Server</text>
+  <text x="563" y="91" text-anchor="middle" font-size="9" fill="#1D9E75">23.1.1.50</text>
+
+  <!-- Switch B -->
+  <rect x="480" y="128" width="90" height="26" rx="5" fill="#0F6E56"/>
+  <text x="525" y="145" text-anchor="middle" font-size="10" fill="#fff" font-weight="500">Switch</text>
+
+  <!-- Wire router → Switch B -->
+  <line x1="400" y1="141" x2="480" y2="141" stroke="#9FE1CB" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- Wire Switch B → Server -->
+  <line x1="531" y1="128" x2="513" y2="154" stroke="#9FE1CB" stroke-width="1.5"/>
+
+  <!-- ARP bubble B (Router→Server MAC) -->
+  <g style="animation:arp-pulse2 4s ease-in-out infinite">
+    <rect x="432" y="105" width="124" height="17" rx="4" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+    <text x="494" y="117" text-anchor="middle" font-size="9" fill="#0F6E56">ARP: who is 23.1.1.50?</text>
+  </g>
+
+  <!-- ── Animated packet hop 1: Johnny → Router ── -->
+  <g style="animation:pkt-move-1 4s ease-in-out infinite">
+    <rect x="75" y="132" width="52" height="16" rx="4" fill="#EF9F27"/>
+    <text x="101" y="144" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">PKT 23.1.1.50</text>
+  </g>
+
+  <!-- ── Animated packet hop 2: Router → Server (new frame) ── -->
+  <g style="animation:pkt-move-2 4s ease-in-out infinite">
+    <rect x="404" y="132" width="52" height="16" rx="4" fill="#1D9E75"/>
+    <text x="430" y="144" text-anchor="middle" font-size="8" fill="#fff" font-weight="600">PKT 23.1.1.50</text>
+  </g>
+
+  <!-- ── Layer 2 frame change callout ── -->
+  <rect x="186" y="225" width="248" height="58" rx="8" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="310" y="242" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="600">Frame rebuilt at every hop</text>
+  <text x="310" y="257" text-anchor="middle" font-size="9" fill="#378ADD">Hop 1 src:Johnny_MAC → dst:Router_MAC</text>
+  <text x="310" y="270" text-anchor="middle" font-size="9" fill="#1D9E75">Hop 2 src:Router_MAC → dst:Server_MAC</text>
+  <text x="310" y="283" text-anchor="middle" font-size="9" fill="#888780">IP destination stays 23.1.1.50 the whole way</text>
+
+  <!-- ── DNS sidebar note ── -->
+  <rect x="12" y="222" width="160" height="68" rx="8" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text x="92" y="239" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="600">DNS first!</text>
+  <text x="92" y="253" text-anchor="middle" font-size="9" fill="#534AB7">"NetworkChuck Coffee"</text>
+  <text x="92" y="265" text-anchor="middle" font-size="9" fill="#534AB7">↓  DNS lookup</text>
+  <text x="92" y="277" text-anchor="middle" font-size="9" fill="#534AB7">23.1.1.50  (then route)</text>
+
+  <!-- ── Routing table detail ── -->
+  <rect x="448" y="222" width="162" height="68" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1" style="animation:rt-glow 3s ease-in-out infinite"/>
+  <text x="529" y="239" text-anchor="middle" font-size="10" fill="#854F0B" font-weight="600">Routing Table</text>
+  <text x="529" y="253" text-anchor="middle" font-size="9" fill="#854F0B" font-family="monospace">10.1.1.0/24 → eth0</text>
+  <text x="529" y="265" text-anchor="middle" font-size="9" fill="#854F0B" font-family="monospace">23.1.1.0/24 → eth1</text>
+  <text x="529" y="277" text-anchor="middle" font-size="9" fill="#854F0B" font-family="monospace">0.0.0.0/0   → ISP</text>
+
+</svg>`,
+    extraSections: [
+      {
+        label: 'The packet journey — step by step',
+        content: `<ol style="padding-left:18px;margin:0;line-height:2;">
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>DNS first.</strong> Johnny types "NetworkChuck Coffee." His device asks the DNS server for the IP — gets back <code style="background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:12px;">23.1.1.50</code>. Only now can routing begin. Routers route numbers, not names.</li>
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>Local or remote?</strong> Johnny's device compares the destination IP against its own subnet mask. Is <code style="background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:12px;">23.1.1.50</code> on <code style="background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:12px;">10.1.1.x</code>? No — it's remote. Decision made: send to the default gateway.</li>
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>ARP for the router.</strong> Johnny knows the gateway IP (<code style="background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:12px;">10.1.1.1</code>). He ARPs for its MAC address — same local process, different target.</li>
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>Frame hop 1.</strong> Layer 2 frame: src=Johnny_MAC → dst=Router_MAC. Layer 3 packet inside: src=10.1.1.10 → dst=23.1.1.50. Switch delivers it locally.</li>
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>Router strips the frame.</strong> Discards the Layer 2 wrapper. Reads the Layer 3 destination IP. Consults routing table — <code style="background:#f1efe8;padding:1px 5px;border-radius:4px;font-size:12px;">23.1.1.x</code> exits via eth1.</li>
+          <li style="font-size:13px;color:#1a1a18;margin-bottom:6px;"><strong>ARP on the far side.</strong> Router ARPs on Network B to learn the server's MAC — same process, new segment.</li>
+          <li style="font-size:13px;color:#1a1a18;"><strong>Frame hop 2.</strong> Router builds a brand-new frame: src=Router_MAC → dst=Server_MAC. Same Layer 3 packet inside — destination IP <em>never changed</em>. Switch B delivers it to the coffee server.</li>
+        </ol>`
+      },
+      {
+        label: 'Why connecting two switches together still does not work',
+        content: `<div style="font-size:13px;color:#1a1a18;line-height:1.7;margin-bottom:12px;">
+          This is the most common beginner mistake. Physically connecting two switches creates a bigger switched environment — but it does nothing to solve the real problem.
+        </div>
+        <svg viewBox="0 0 580 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;border-radius:8px;margin-bottom:12px;">
+          <text x="140" y="20" text-anchor="middle" font-size="10" fill="#A32D2D" font-weight="600">✗ Two switches connected — still broken</text>
+          <rect x="10" y="30" width="110" height="70" rx="7" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="65" y="52" text-anchor="middle" font-size="9" fill="#A32D2D" font-weight="500">Switch A</text>
+          <text x="65" y="66" text-anchor="middle" font-size="9" fill="#A32D2D">10.1.1.x</text>
+          <rect x="20" y="74" width="36" height="18" rx="3" fill="#fff" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="38" y="86" text-anchor="middle" font-size="8" fill="#A32D2D">PC</text>
+          <rect x="64" y="74" width="36" height="18" rx="3" fill="#fff" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="82" y="86" text-anchor="middle" font-size="8" fill="#A32D2D">PC</text>
+          <rect x="150" y="30" width="110" height="70" rx="7" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="205" y="52" text-anchor="middle" font-size="9" fill="#A32D2D" font-weight="500">Switch B</text>
+          <text x="205" y="66" text-anchor="middle" font-size="9" fill="#A32D2D">23.1.1.x</text>
+          <rect x="160" y="74" width="36" height="18" rx="3" fill="#fff" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="178" y="86" text-anchor="middle" font-size="8" fill="#A32D2D">PC</text>
+          <rect x="204" y="74" width="36" height="18" rx="3" fill="#fff" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="222" y="86" text-anchor="middle" font-size="8" fill="#A32D2D">PC</text>
+          <line x1="120" y1="65" x2="150" y2="65" stroke="#E24B4A" stroke-width="2" stroke-dasharray="4,3"/>
+          <text x="135" y="58" text-anchor="middle" font-size="8" fill="#A32D2D">cable</text>
+          <rect x="10" y="112" width="250" height="38" rx="6" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+          <text x="135" y="127" text-anchor="middle" font-size="9" fill="#A32D2D">The problem is not different switches.</text>
+          <text x="135" y="141" text-anchor="middle" font-size="9" fill="#A32D2D">The problem is different IP networks. A switch cannot bridge them.</text>
+          <text x="430" y="20" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="600">✓ Router added — now it works</text>
+          <rect x="300" y="30" width="90" height="60" rx="7" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+          <text x="345" y="52" text-anchor="middle" font-size="9" fill="#185FA5" font-weight="500">Switch A</text>
+          <text x="345" y="66" text-anchor="middle" font-size="9" fill="#185FA5">10.1.1.x</text>
+          <rect x="410" y="38" width="70" height="44" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="445" y="56" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">ROUTER</text>
+          <text x="445" y="70" text-anchor="middle" font-size="8" fill="#BA7517">L3 bridge</text>
+          <rect x="490" y="30" width="90" height="60" rx="7" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+          <text x="535" y="52" text-anchor="middle" font-size="9" fill="#0F6E56" font-weight="500">Switch B</text>
+          <text x="535" y="66" text-anchor="middle" font-size="9" fill="#0F6E56">23.1.1.x</text>
+          <line x1="390" y1="60" x2="410" y2="60" stroke="#FAC775" stroke-width="1.5"/>
+          <line x1="480" y1="60" x2="490" y2="60" stroke="#FAC775" stroke-width="1.5"/>
+          <rect x="300" y="112" width="280" height="38" rx="6" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+          <text x="440" y="127" text-anchor="middle" font-size="9" fill="#0F6E56">The router understands IP. It bridges the two networks</text>
+          <text x="440" y="141" text-anchor="middle" font-size="9" fill="#0F6E56">at Layer 3 — the only device that can.</text>
+        </svg>
+        <p style="font-size:12px;color:#6b6b68;line-height:1.6;">A switch only handles Layer 2 (MAC addresses) within one IP network. No matter how many switches you chain together, devices on <code style="background:#f1efe8;padding:1px 4px;border-radius:3px;">10.1.1.x</code> and <code style="background:#f1efe8;padding:1px 4px;border-radius:3px;">23.1.1.x</code> cannot reach each other without a router between them.</p>`
+      },
+      {
+        label: 'The local-or-remote decision every device makes',
+        content: `<svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;border-radius:8px;margin-bottom:12px;">
+          <style>
+            @keyframes decision-pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+            @keyframes path-local { 0%,100%{opacity:0} 20%{opacity:1} 45%{opacity:1} 55%{opacity:0} }
+            @keyframes path-remote { 0%,55%,100%{opacity:0} 65%{opacity:1} 90%{opacity:1} }
+          </style>
+          <text x="290" y="18" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="600">Every device asks this question before sending every packet</text>
+          <rect x="200" y="28" width="180" height="36" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5" style="animation:decision-pulse 3s ease-in-out infinite"/>
+          <text x="290" y="46" text-anchor="middle" font-size="11" fill="#854F0B" font-weight="600">Is the destination IP</text>
+          <text x="290" y="60" text-anchor="middle" font-size="11" fill="#854F0B" font-weight="600">on MY subnet?</text>
+          <line x1="240" y1="64" x2="120" y2="100" stroke="#185FA5" stroke-width="1.5"/>
+          <line x1="340" y1="64" x2="460" y2="100" stroke="#A32D2D" stroke-width="1.5"/>
+          <text x="160" y="90" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">YES — local</text>
+          <text x="420" y="90" text-anchor="middle" font-size="10" fill="#A32D2D" font-weight="600">NO — remote</text>
+          <g style="animation:path-local 4s ease-in-out infinite">
+            <rect x="50" y="104" width="150" height="50" rx="7" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+            <text x="125" y="122" text-anchor="middle" font-size="9" fill="#185FA5" font-weight="500">ARP for target device MAC</text>
+            <text x="125" y="136" text-anchor="middle" font-size="9" fill="#378ADD">Frame → Switch → Device</text>
+            <text x="125" y="148" text-anchor="middle" font-size="9" fill="#378ADD">direct delivery</text>
+          </g>
+          <g style="animation:path-remote 4s ease-in-out infinite">
+            <rect x="380" y="104" width="165" height="50" rx="7" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1"/>
+            <text x="462" y="122" text-anchor="middle" font-size="9" fill="#993C1D" font-weight="500">ARP for default gateway MAC</text>
+            <text x="462" y="136" text-anchor="middle" font-size="9" fill="#D85A30">Frame → Switch → Router</text>
+            <text x="462" y="148" text-anchor="middle" font-size="9" fill="#D85A30">router takes it from here</text>
+          </g>
+          <text x="290" y="170" text-anchor="middle" font-size="9" fill="#888780">Same ARP process either way — the only difference is what IP you're ARPing for</text>
+        </svg>
+        <p style="font-size:12px;color:#6b6b68;line-height:1.6;">This is why a default gateway is required on every device. Without it, the device has no answer for the "NO" branch — it simply cannot send remote traffic. It can reach its neighbours, but it cannot leave the neighbourhood.</p>`
+      },
+      {
+        label: 'Default gateway — the exit door',
+        content: `<div style="font-size:13px;color:#1a1a18;line-height:1.7;">
+          <p style="margin-bottom:10px;">The <strong>default gateway</strong> is the IP address of the router interface on your local subnet. It is the only exit from your network.</p>
+          <div style="background:#fafaf8;border:1px solid #D3D1C7;border-radius:8px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;margin-bottom:10px;">
+            <span style="color:#888780"># Windows — check your gateway</span><br>
+            ipconfig<br><br>
+            <span style="color:#888780"># Linux / Mac</span><br>
+            ip route show<br>
+            route -n
+          </div>
+          <p style="color:#A32D2D;font-size:12px;background:#FCEBEB;border-radius:8px;padding:10px 12px;border:1px solid rgba(163,45,45,0.15);">
+            <strong>Real world tip:</strong> Device can reach local machines but not the internet? Check the default gateway first — wrong IP, missing entry, or a downed router interface kills all remote traffic instantly. You will look like a wizard for spotting this early.
+          </p>
+        </div>`
+      },
+      {
+        label: 'Layer 2 vs Layer 3 — what changes and what stays',
+        content: `<div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:#f5f4f0;">
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#1a1a18;border-bottom:1px solid #D3D1C7;"></th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#185FA5;border-bottom:1px solid #D3D1C7;">Layer 2 — Frame</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#854F0B;border-bottom:1px solid #D3D1C7;">Layer 3 — Packet</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #f0efe8;">
+                <td style="padding:8px 12px;color:#6b6b68;font-size:12px;">Addresses used</td>
+                <td style="padding:8px 12px;color:#185FA5;">MAC addresses</td>
+                <td style="padding:8px 12px;color:#854F0B;">IP addresses</td>
+              </tr>
+              <tr style="background:#fafaf8;border-bottom:1px solid #f0efe8;">
+                <td style="padding:8px 12px;color:#6b6b68;font-size:12px;">Scope</td>
+                <td style="padding:8px 12px;color:#185FA5;">Local segment only</td>
+                <td style="padding:8px 12px;color:#854F0B;">End-to-end, source to destination</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0efe8;">
+                <td style="padding:8px 12px;color:#6b6b68;font-size:12px;">Changed by router?</td>
+                <td style="padding:8px 12px;color:#A32D2D;font-weight:500;">Yes — rebuilt at every hop</td>
+                <td style="padding:8px 12px;color:#0F6E56;font-weight:500;">No — unchanged end-to-end</td>
+              </tr>
+              <tr style="background:#fafaf8;">
+                <td style="padding:8px 12px;color:#6b6b68;font-size:12px;">Device that uses it</td>
+                <td style="padding:8px 12px;color:#185FA5;">Switch</td>
+                <td style="padding:8px 12px;color:#854F0B;">Router</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>`
+      },
+      {
+        label: 'The internet is just this process at scale',
+        content: `<svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;border-radius:8px;margin-bottom:12px;">
+          <style>
+            @keyframes inet-pkt { 0%,100%{opacity:0;transform:translateX(0)} 8%{opacity:1} 88%{opacity:1;transform:translateX(390px)} 92%{opacity:0;transform:translateX(390px)} }
+            @keyframes rt-fade { 0%,100%{opacity:0.3} 50%{opacity:1} }
+          </style>
+          <text x="310" y="16" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="600">Your packet crosses many routers to reach the internet — the same strip-and-rebuild process repeats at each one</text>
+          <rect x="10" y="28" width="70" height="40" rx="6" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/>
+          <text x="45" y="46" text-anchor="middle" font-size="9" fill="#185FA5" font-weight="500">Your PC</text>
+          <text x="45" y="59" text-anchor="middle" font-size="8" fill="#378ADD">10.1.1.10</text>
+          <rect x="120" y="24" width="64" height="48" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="152" y="43" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">Router</text>
+          <text x="152" y="56" text-anchor="middle" font-size="8" fill="#BA7517">ISP edge</text>
+          <text x="152" y="66" text-anchor="middle" font-size="7" fill="#BA7517" style="animation:rt-fade 2.5s ease-in-out infinite">4 routes</text>
+          <rect x="234" y="24" width="64" height="48" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="266" y="43" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">Router</text>
+          <text x="266" y="56" text-anchor="middle" font-size="8" fill="#BA7517">backbone</text>
+          <text x="266" y="66" text-anchor="middle" font-size="7" fill="#BA7517" style="animation:rt-fade 2.5s ease-in-out infinite 0.5s">900k routes</text>
+          <rect x="348" y="24" width="64" height="48" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="380" y="43" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">Router</text>
+          <text x="380" y="56" text-anchor="middle" font-size="8" fill="#BA7517">backbone</text>
+          <text x="380" y="66" text-anchor="middle" font-size="7" fill="#BA7517" style="animation:rt-fade 2.5s ease-in-out infinite 1s">900k routes</text>
+          <rect x="462" y="24" width="64" height="48" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5"/>
+          <text x="494" y="43" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">Router</text>
+          <text x="494" y="56" text-anchor="middle" font-size="8" fill="#BA7517">dest ISP</text>
+          <text x="494" y="66" text-anchor="middle" font-size="7" fill="#BA7517" style="animation:rt-fade 2.5s ease-in-out infinite 1.5s">12 routes</text>
+          <rect x="546" y="28" width="64" height="40" rx="6" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1"/>
+          <text x="578" y="46" text-anchor="middle" font-size="9" fill="#0F6E56" font-weight="500">☕ Server</text>
+          <text x="578" y="59" text-anchor="middle" font-size="8" fill="#1D9E75">23.1.1.50</text>
+          <line x1="80" y1="48" x2="120" y2="48" stroke="#D3D1C7" stroke-width="1.5"/>
+          <line x1="184" y1="48" x2="234" y2="48" stroke="#D3D1C7" stroke-width="1.5"/>
+          <line x1="298" y1="48" x2="348" y2="48" stroke="#D3D1C7" stroke-width="1.5"/>
+          <line x1="412" y1="48" x2="462" y2="48" stroke="#D3D1C7" stroke-width="1.5"/>
+          <line x1="526" y1="48" x2="546" y2="48" stroke="#D3D1C7" stroke-width="1.5"/>
+          <g style="animation:inet-pkt 5s ease-in-out infinite">
+            <rect x="82" y="40" width="36" height="14" rx="3" fill="#EF9F27"/>
+            <text x="100" y="51" text-anchor="middle" font-size="7" fill="#fff" font-weight="600">dst 23.1.1.50</text>
+          </g>
+          <text x="310" y="100" text-anchor="middle" font-size="9" fill="#888780">Same destination IP the entire way. New frame built at each router. Routing table consulted at each hop.</text>
+          <text x="310" y="116" text-anchor="middle" font-size="9" fill="#888780">Lab routing table: 2–3 routes. Internet backbone router routing table: ~900,000+ routes.</text>
+          <text x="310" y="130" text-anchor="middle" font-size="9" fill="#534AB7" font-weight="500">The internet is not magic — it is this same router process, repeated millions of times.</text>
+        </svg>`
+      }
+    ],
+    terms: [
+      { label: 'default gateway', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'routing table', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'IP address (L3)', bg: '#E6F1FB', color: '#185FA5', target: 'ip' },
+      { label: 'MAC address (L2)', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'ARP', bg: '#E1F5EE', color: '#0F6E56' },
+      { label: 'DNS', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'packet vs frame', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'next-hop', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'inter-network routing', bg: '#E1F5EE', color: '#0F6E56' },
+    ],
+    trap: 'The IP destination address NEVER changes as a packet travels across routers — only the Layer 2 frame (MAC addresses) is rebuilt at each hop. Students confuse this constantly. Also: the default gateway is always a router IP on YOUR subnet — not a separate mysterious device. And DNS must resolve a name to an IP before any routing can happen — routers do not understand hostnames.',
+    related: [
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'handles local delivery' },
+      { id: 'ip', icon: 'IP', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'IP Addressing', desc: 'Layer 3 addresses' },
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model', desc: 'Layer 2 vs Layer 3' },
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router (card)', desc: 'original device card' },
+    ]
+  },
+
+  w1l4: {
+    icon: 'L4', iconBg: '#EEEDFE', iconColor: '#534AB7',
+    name: 'TCP/IP & OSI — The Network Models',
+    layerLabel: 'Layers 1–7', layerBg: '#EEEDFE', layerColor: '#534AB7', layerTarget: null,
+    objLabel: 'Week 1 · Lesson 4', objBg: '#F1EFE8', objColor: '#5F5E5A',
+    oneliner: 'TCP/IP is the model devices actually use to communicate. OSI is the 7-layer model engineers use to describe, discuss, and troubleshoot what happens on a network.',
+    hook: 'TCP/IP won the war — every device on earth speaks it. OSI won the language — every engineer uses its layer numbers. You need both: one to understand how traffic actually moves, one to understand what engineers are talking about when something breaks.',
+    visual: `<style>
+@keyframes l4-enc{0%{opacity:0;transform:translateY(-5px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes l4-pkt{0%,100%{opacity:0;transform:translateX(0)}10%{opacity:1}85%{opacity:1;transform:translateX(96px)}90%{opacity:0}}
+@keyframes l4-strip{0%,100%{opacity:0;transform:translateX(0)}10%{opacity:1}85%{opacity:1;transform:translateX(-96px)}90%{opacity:0}}
+@keyframes l4-glow{0%,100%{opacity:.4}50%{opacity:1}}
+</style>
+<svg viewBox="0 0 640 314" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8">
+
+  <!-- COLUMN HEADERS -->
+  <text x="106" y="16" text-anchor="middle" font-size="10" fill="#534AB7" font-weight="600">OSI Model — 7 layers</text>
+  <text x="320" y="16" text-anchor="middle" font-size="9" fill="#888780">maps to →</text>
+  <text x="490" y="16" text-anchor="middle" font-size="10" fill="#185FA5" font-weight="600">TCP/IP Stack — 5 layers</text>
+
+  <!-- OSI LAYERS (left) -->
+  ${[
+    ['7','Application','#EEEDFE','#534AB7','HTTP · DNS · SMTP · SSH'],
+    ['6','Presentation','#E8E7FD','#4A42A8','TLS · encoding · compression'],
+    ['5','Session','#E2E1FC','#3C3489','sockets · auth · session mgmt'],
+    ['4','Transport','#E1F5EE','#0F6E56','TCP · UDP · ports · segments'],
+    ['3','Network','#FAEEDA','#854F0B','IP · routers · packets'],
+    ['2','Data Link','#FAECE7','#993C1D','MAC · switches · frames'],
+    ['1','Physical','#F1EFE8','#5F5E5A','cables · signals · bits'],
+  ].map(([n,name,bg,col,proto],i) => `
+    <g style="animation:l4-enc .5s ease forwards;animation-delay:${i*0.12}s;opacity:0">
+      <rect x="20" y="${24+i*33}" width="172" height="28" rx="5" fill="${bg}" stroke="none"/>
+      <text x="34" y="${41+i*33}" font-size="10" fill="${col}" font-weight="700">L${n}</text>
+      <text x="54" y="${41+i*33}" font-size="10" fill="${col}" font-weight="500">${name}</text>
+      <text x="34" y="${52+i*33}" font-size="8" fill="${col}" opacity=".75">${proto}</text>
+    </g>
+  `).join('')}
+
+  <!-- TCP/IP LAYERS (right) with bracket groupings -->
+  <!-- Application (covers OSI 5+6+7) -->
+  <rect x="390" y="24" width="172" height="94" rx="5" fill="#EEEDFE" stroke="#C5C2F5" stroke-width="1.2"/>
+  <text x="476" y="55" text-anchor="middle" font-size="11" fill="#534AB7" font-weight="700">Application</text>
+  <text x="476" y="70" text-anchor="middle" font-size="8.5" fill="#534AB7">HTTP · HTTPS · DNS · SMTP</text>
+  <text x="476" y="83" text-anchor="middle" font-size="8.5" fill="#534AB7">SSH · FTP · Telnet · SNMP</text>
+  <text x="476" y="96" text-anchor="middle" font-size="8" fill="#534AB7" opacity=".7">OSI L5 + L6 + L7 rolled into one</text>
+  <text x="476" y="110" text-anchor="middle" font-size="8" fill="#534AB7" opacity=".7">PDU: data</text>
+
+  <!-- Transport (covers OSI 4) -->
+  <rect x="390" y="123" width="172" height="28" rx="5" fill="#E1F5EE" stroke="#9FE1CB" stroke-width="1.2"/>
+  <text x="476" y="138" text-anchor="middle" font-size="10" fill="#0F6E56" font-weight="700">Transport</text>
+  <text x="476" y="148" text-anchor="middle" font-size="8" fill="#0F6E56" opacity=".8">TCP · UDP — PDU: segment</text>
+
+  <!-- Internet / Network (covers OSI 3) -->
+  <rect x="390" y="156" width="172" height="28" rx="5" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.2"/>
+  <text x="476" y="171" text-anchor="middle" font-size="10" fill="#854F0B" font-weight="700">Internet</text>
+  <text x="476" y="181" text-anchor="middle" font-size="8" fill="#854F0B" opacity=".8">IP · ICMP · ARP — PDU: packet</text>
+
+  <!-- Network Access (covers OSI 1+2) -->
+  <rect x="390" y="189" width="172" height="60" rx="5" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.2"/>
+  <text x="476" y="212" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="700">Network Access</text>
+  <text x="476" y="226" text-anchor="middle" font-size="8.5" fill="#5F5E5A">Ethernet · Wi-Fi · MAC</text>
+  <text x="476" y="238" text-anchor="middle" font-size="8.5" fill="#5F5E5A">cables · signals</text>
+  <text x="476" y="248" text-anchor="middle" font-size="8" fill="#5F5E5A" opacity=".7">OSI L1 + L2 — PDU: frame / bits</text>
+
+  <!-- MAPPING BRACKETS -->
+  <!-- L7+L6+L5 → Application bracket -->
+  <line x1="192" y1="38" x2="210" y2="38" stroke="#C5C2F5" stroke-width="1"/>
+  <line x1="192" y1="71" x2="210" y2="71" stroke="#C5C2F5" stroke-width="1"/>
+  <line x1="192" y1="104" x2="210" y2="104" stroke="#C5C2F5" stroke-width="1"/>
+  <line x1="210" y1="38" x2="210" y2="104" stroke="#C5C2F5" stroke-width="1"/>
+  <line x1="210" y1="71" x2="230" y2="71" stroke="#C5C2F5" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="322" y="57" text-anchor="middle" font-size="8" fill="#534AB7">L5+L6+L7</text>
+  <text x="322" y="68" text-anchor="middle" font-size="8" fill="#534AB7">→ Application</text>
+
+  <!-- L4 → Transport -->
+  <line x1="192" y1="137" x2="390" y2="137" stroke="#9FE1CB" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="291" y="131" text-anchor="middle" font-size="8" fill="#0F6E56">L4 → Transport</text>
+
+  <!-- L3 → Internet -->
+  <line x1="192" y1="170" x2="390" y2="170" stroke="#FAC775" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="291" y="164" text-anchor="middle" font-size="8" fill="#854F0B">L3 → Internet</text>
+
+  <!-- L1+L2 → Network Access bracket -->
+  <line x1="192" y1="203" x2="210" y2="203" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="192" y1="236" x2="210" y2="236" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="210" y1="203" x2="210" y2="236" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="210" y1="219" x2="230" y2="219" stroke="#D3D1C7" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="310" y="215" text-anchor="middle" font-size="8" fill="#5F5E5A">L1+L2</text>
+  <text x="310" y="226" text-anchor="middle" font-size="8" fill="#5F5E5A">→ Net Access</text>
+
+  <!-- ANIMATED PACKET going right (encapsulation) -->
+  <g style="animation:l4-pkt 5s ease-in-out infinite">
+    <rect x="196" y="225" width="38" height="13" rx="3" fill="#EF9F27"/>
+    <text x="215" y="235" text-anchor="middle" font-size="7.5" fill="#fff" font-weight="600">frame</text>
+  </g>
+
+  <!-- ANIMATED STRIP going left (decapsulation) -->
+  <g style="animation:l4-strip 5s ease-in-out infinite 2.5s">
+    <rect x="352" y="225" width="38" height="13" rx="3" fill="#534AB7"/>
+    <text x="371" y="235" text-anchor="middle" font-size="7.5" fill="#fff" font-weight="600">strip</text>
+  </g>
+
+  <!-- PDU LABEL ROW -->
+  <rect x="20" y="256" width="560" height="20" rx="5" fill="#f5f4f0" stroke="none"/>
+  <text x="300" y="269" text-anchor="middle" font-size="8.5" fill="#6b6b68">Sender wraps down L7→L1 (encapsulation) · Receiver unwraps up L1→L7 (decapsulation) · Each layer adds/removes its header</text>
+
+  <!-- MNEMONICS -->
+  <rect x="20" y="282" width="274" height="24" rx="5" fill="#E6F1FB" stroke="none"/>
+  <text x="28" y="293" font-size="8" fill="#185FA5" font-weight="700">↑ L1→L7 bottom-up:</text>
+  <text x="28" y="302" font-size="8.5" fill="#185FA5" font-weight="600">Please Do Not Throw Sausage Pizza Away</text>
+
+  <rect x="306" y="282" width="274" height="24" rx="5" fill="#E1F5EE" stroke="none"/>
+  <text x="314" y="293" font-size="8" fill="#0F6E56" font-weight="700">↓ L7→L1 top-down:</text>
+  <text x="314" y="302" font-size="8.5" fill="#0F6E56" font-weight="600">All People Seem To Need Data Processing</text>
+
+</svg>`,
+    extraSections: [
+      {
+        label: 'Why both models still exist — what each one is actually for',
+        content: `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:#EEEDFE;border-radius:8px;padding:12px 14px">
+            <div style="font-size:12px;font-weight:700;color:#534AB7;margin-bottom:6px">OSI — 7 layers</div>
+            <div style="font-size:12px;color:#534AB7;line-height:1.7">The <strong>troubleshooting language.</strong> Engineers say "Layer 1 issue" or "Layer 7 problem" all day long — even when the actual traffic uses TCP/IP. OSI gives a clean, shared vocabulary. It never became the practical standard but it won the terminology war.</div>
+          </div>
+          <div style="background:#E6F1FB;border-radius:8px;padding:12px 14px">
+            <div style="font-size:12px;font-weight:700;color:#185FA5;margin-bottom:6px">TCP/IP — 4 or 5 layers</div>
+            <div style="font-size:12px;color:#185FA5;line-height:1.7">The <strong>model devices actually use.</strong> Every OS, router, phone, and server on Earth runs TCP/IP. It won because it was practical, open, and already deployed on ARPANET. It collapsed OSI's top three layers into one Application layer.</div>
+          </div>
+        </div>`
+      },
+      {
+        label: 'The history that made standards necessary',
+        content: `<div style="font-size:13px;color:#1a1a18;line-height:1.75">
+          <p style="margin-bottom:10px">Early networking was a proprietary mess. IBM had its own system. Other vendors had others. Their devices couldn't talk to each other — like trying to plug the wrong charger into your phone. Cool tech, useless at scale.</p>
+          <p style="margin-bottom:10px">ARPANET (1960s, U.S. Dept of Defense) proved computers could communicate across a network using <strong>packet switching</strong> — breaking data into chunks, sending them independently, reassembling at the destination. Revolutionary concept, but no agreed standard yet.</p>
+          <p>Eventually everyone realised: without shared rules, networking would stay a collection of incompatible islands. That realisation produced the models. TCP/IP became the open standard. OSI became the reference framework. Together they made universal networking possible.</p>
+        </div>`
+      },
+      {
+        label: 'Encapsulation & decapsulation — what actually happens at each layer',
+        content: `<div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead><tr style="background:#f5f4f0">
+              <th style="padding:7px 10px;text-align:left;border-bottom:1px solid #D3D1C7;color:#5F5E5A">Direction</th>
+              <th style="padding:7px 10px;text-align:left;border-bottom:1px solid #D3D1C7;color:#534AB7">Layer</th>
+              <th style="padding:7px 10px;text-align:left;border-bottom:1px solid #D3D1C7;color:#5F5E5A">What happens</th>
+              <th style="padding:7px 10px;text-align:left;border-bottom:1px solid #D3D1C7;color:#854F0B">PDU name</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #f0efe8"><td style="padding:7px 10px;color:#534AB7;font-size:11px" rowspan="5">⬇ Encapsulation<br>(sending)</td><td style="padding:7px 10px;color:#534AB7">L7 Application</td><td style="padding:7px 10px;color:#5F5E5A">App creates the data (e.g. HTTP request)</td><td style="padding:7px 10px;color:#854F0B;font-family:'DM Mono',monospace">data</td></tr>
+              <tr style="background:#fafaf8;border-bottom:1px solid #f0efe8"><td style="padding:7px 10px;color:#0F6E56">L4 Transport</td><td style="padding:7px 10px;color:#5F5E5A">TCP/UDP header added (src/dst port, seq number)</td><td style="padding:7px 10px;color:#854F0B;font-family:'DM Mono',monospace">segment</td></tr>
+              <tr style="border-bottom:1px solid #f0efe8"><td style="padding:7px 10px;color:#854F0B">L3 Network</td><td style="padding:7px 10px;color:#5F5E5A">IP header added (src/dst IP address)</td><td style="padding:7px 10px;color:#854F0B;font-family:'DM Mono',monospace">packet</td></tr>
+              <tr style="background:#fafaf8;border-bottom:1px solid #f0efe8"><td style="padding:7px 10px;color:#993C1D">L2 Data Link</td><td style="padding:7px 10px;color:#5F5E5A">Ethernet header added (src/dst MAC) + FCS trailer</td><td style="padding:7px 10px;color:#854F0B;font-family:'DM Mono',monospace">frame</td></tr>
+              <tr style="border-bottom:1px solid #D3D1C7"><td style="padding:7px 10px;color:#5F5E5A">L1 Physical</td><td style="padding:7px 10px;color:#5F5E5A">Frame converted to electrical/optical/radio signal</td><td style="padding:7px 10px;color:#854F0B;font-family:'DM Mono',monospace">bits</td></tr>
+              <tr style="background:#fafaf8"><td style="padding:7px 10px;color:#0F6E56;font-size:11px" rowspan="1">⬆ Decapsulation<br>(receiving)</td><td style="padding:7px 10px;color:#5F5E5A" colspan="3">Receiver processes in reverse — L1→L7 — stripping each header at the appropriate layer until the original data reaches the application.</td></tr>
+            </tbody>
+          </table>
+        </div>`
+      },
+      {
+        label: 'OSI as a troubleshooting map — the real-world use',
+        content: `<div style="font-size:13px;color:#1a1a18;line-height:1.7;margin-bottom:12px">When something breaks, experienced engineers don't panic — they ask <strong>"What layer is failing?"</strong> This one habit makes problems systematic instead of random.</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${[
+            ['L1 · Physical','#F1EFE8','#5F5E5A','Cable unplugged, NIC dead, bad SFP, signal too weak. Check: is the link light on?'],
+            ['L2 · Data Link','#FAECE7','#993C1D','Wrong VLAN, port in wrong mode, MAC table full, duplex mismatch. Check: show mac-address-table, show interface'],
+            ['L3 · Network','#FAEEDA','#854F0B','Wrong IP, wrong subnet mask, missing route, bad default gateway. Check: ping, ip route, traceroute'],
+            ['L4 · Transport','#E1F5EE','#0F6E56','Port blocked by firewall, wrong port configured, TCP session not establishing. Check: telnet to port, show acl'],
+            ['L7 · Application','#EEEDFE','#534AB7','App misconfigured, DNS wrong, certificate expired, auth failing. Check: app logs, nslookup, curl'],
+          ].map(([layer, bg, col, tip]) => `
+            <div style="background:${bg};border-radius:7px;padding:9px 12px;display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:start">
+              <span style="font-size:11px;font-weight:700;color:${col}">${layer}</span>
+              <span style="font-size:12px;color:${col};line-height:1.5">${tip}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:10px;background:#FCEBEB;border:1px solid rgba(163,45,45,0.15);border-radius:8px;padding:10px 12px;font-size:12px;color:#A32D2D;line-height:1.6">
+          <strong>Real world tip:</strong> Always start at Layer 1 and work up. Chasing an application problem for an hour only to find the cable was loose is a rite of passage — but only do it once.
+        </div>`
+      },
+      {
+        label: 'Layer-to-device quick reference',
+        content: `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+          ${[
+            ['Layer 1','Hub · Cable · NIC · Repeater','#F1EFE8','#5F5E5A'],
+            ['Layer 2','Switch · Bridge · WAP','#FAECE7','#993C1D'],
+            ['Layer 3','Router · L3 Switch','#FAEEDA','#854F0B'],
+            ['Layer 4','Firewall (stateful) · Load Balancer','#E1F5EE','#0F6E56'],
+            ['Layer 7','Proxy · WAF · App Gateway','#EEEDFE','#534AB7'],
+          ].map(([layer, devices, bg, col]) => `
+            <div style="background:${bg};border-radius:7px;padding:9px 11px">
+              <div style="font-size:10px;font-family:'DM Mono',monospace;font-weight:600;color:${col};margin-bottom:4px">${layer}</div>
+              <div style="font-size:11px;color:${col};line-height:1.5">${devices}</div>
+            </div>
+          `).join('')}
+        </div>`
+      }
+    ],
+    terms: [
+      { label: 'TCP/IP stack', bg: '#E6F1FB', color: '#185FA5' },
+      { label: 'OSI model', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'encapsulation', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'decapsulation', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'packet switching', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'PDU', bg: '#EEEDFE', color: '#534AB7' },
+      { label: 'segment', bg: '#E1F5EE', color: '#0F6E56' },
+      { label: 'packet', bg: '#FAEEDA', color: '#854F0B' },
+      { label: 'frame', bg: '#FAECE7', color: '#993C1D' },
+      { label: 'bits', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'ARPANET', bg: '#F1EFE8', color: '#5F5E5A' },
+      { label: 'proprietary vs open standard', bg: '#FCEBEB', color: '#A32D2D' },
+    ],
+    trap: 'TCP/IP has 4 layers in the classic definition, but 5 when Physical is split out — CCNA commonly uses 5. OSI has 7. On the exam "Layer 3 device" always means router; "Layer 2 device" always means switch — even though real traffic uses TCP/IP, not OSI. OSI Layers 5 and 6 (Session and Presentation) are rarely tested in depth but the layer numbers must be memorised. PDU names must be exact: segment (L4), packet (L3), frame (L2), bits (L1).',
+    related: [
+      { id: 'osi', icon: 'OS', iconBg: '#EEEDFE', iconColor: '#534AB7', name: 'OSI Model card', desc: 'layer reference' },
+      { id: 'router', icon: 'RT', iconBg: '#E6F1FB', iconColor: '#185FA5', name: 'Router', desc: 'Layer 3 device' },
+      { id: 'switch', icon: 'SW', iconBg: '#FAECE7', iconColor: '#993C1D', name: 'Switch', desc: 'Layer 2 device' },
+      { id: 'w1l3', icon: 'L3', iconBg: '#FAEEDA', iconColor: '#854F0B', name: 'Lesson 3', desc: 'router deep-dive' },
+    ]
+  }
+
+};
+
+function showCard(id) {
+  if (!CARDS[id]) return;
+  current = id;
+  renderCard(id);
+  updateNav(id);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeSidebar();
+  document.getElementById('mobileCardName').textContent = CARDS[id].name;
+}
+
+function renderCard(id) {
+  const c = CARDS[id];
+  const main = document.getElementById('main');
+
+  if (c.customRender) { main.innerHTML = renderPortsCard(c); return; }
+
+
+  const extraHtml = (c.extraSections || []).map(s => {
+    return `<div class="extra-section-label">${s.label}</div><div class="extra-section-body">${s.content}</div>`;
+  }).join('');
+
+  main.innerHTML = `<div class="card">
+    <div class="card-header">
+      <div class="icon-badge" style="background:${c.iconBg};color:${c.iconColor}">${c.icon}</div>
+      <span class="topic-name">${c.name}</span>
+      ${c.layerTarget
+        ? `<span class="badge" style="background:${c.layerBg};color:${c.layerColor}" onclick="showCard('${c.layerTarget}')">${c.layerLabel} ↗</span>`
+        : `<span class="badge no-click" style="background:${c.layerBg};color:${c.layerColor}">${c.layerLabel}</span>`}
+      <span class="badge no-click" style="background:${c.objBg};color:${c.objColor}">${c.objLabel}</span>
+    </div>
+    <div class="card-body">
+      <p class="oneliner">${c.oneliner}</p>
+      <div class="hook-label">Memory hook</div>
+      <div class="hook-box">${c.hook}</div>
+      ${c.visual ? `<div class="visual-wrap">${c.visual}</div>` : ''}
+      ${extraHtml}
+      <div class="hook-label">Key terms</div>
+      <div class="terms-wrap">
+        ${c.terms.map(t => t.target
+          ? `<button class="term-pill" style="background:${t.bg};color:${t.color}" onclick="showCard('${t.target}')">${t.label} ↗</button>`
+          : `<span class="term-pill static" style="background:${t.bg};color:${t.color}">${t.label}</span>`
+        ).join('')}
+      </div>
+      <div class="trap-box">
+        <div class="trap-label">⚠ Exam trap</div>
+        <div class="trap-text">${c.trap}</div>
+      </div>
+      <div class="related-section">
+        <div class="related-label">Related cards</div>
+        <div class="related-cards">
+          ${c.related.map(r => `<div class="related-card" onclick="showCard('${r.id}')">
+            <span class="rc-icon" style="background:${r.iconBg};color:${r.iconColor}">${r.icon}</span>
+            <div class="rc-name">${r.name}</div><div class="rc-desc">${r.desc}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPortsCard(c) {
+
+  const tcpudpHtml = c.tcpudp ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      ${c.tcpudp.map(t => `
+        <div style="background:${t.bg};border-radius:8px;padding:10px 12px;">
+          <div style="font-size:13px;font-weight:500;color:${t.color};margin-bottom:4px;">${t.proto}</div>
+          <div style="font-size:11px;color:${t.color};margin-bottom:5px;line-height:1.4;">${t.desc}</div>
+          <div style="font-size:10px;color:${t.color};opacity:0.8;font-style:italic;">${t.services}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  const groupsHtml = c.groups.map(g => `
+    <div style="margin-bottom:10px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:#6b6b68;padding:10px 0 5px;">${g.label}</div>
+      ${g.rows.map(r => `
+        <div style="display:grid;grid-template-columns:56px 72px 1fr;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;transition:background 0.1s;" onmouseover="this.style.background='#f5f4f0'" onmouseout="this.style.background='transparent'">
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;">${r.port}</span>
+          <span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:${r.protoBg};color:${r.protoColor};display:inline-block;text-align:center;">${r.proto}</span>
+          <span>
+            <span style="font-size:13px;font-weight:500;">${r.name}</span>
+            <span style="font-size:11px;color:#6b6b68;margin-left:6px;">${r.note}</span>
+          </span>
+        </div>`).join('')}
+    </div>`).join('');
+
+  const trapsHtml = c.traps.map(t => `<p style="font-size:12px;color:#A32D2D;margin:0 0 5px;line-height:1.5;">${t}</p>`).join('');
+  const relatedHtml = c.related.map(r => `
+    <div class="related-card" onclick="showCard('${r.id}')">
+      <span class="rc-icon" style="background:${r.iconBg};color:${r.iconColor}">${r.icon}</span>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-desc">${r.desc}</div>
+    </div>`).join('');
+
+  return `<div class="card">
+    <div class="card-header">
+      <div class="icon-badge" style="background:${c.iconBg};color:${c.iconColor}">${c.icon}</div>
+      <span class="topic-name">${c.name}</span>
+      <span class="badge" style="background:${c.layerBg};color:${c.layerColor}" onclick="showCard('${c.layerTarget}')">${c.layerLabel} ↗</span>
+      <span class="badge no-click" style="background:${c.objBg};color:${c.objColor}">${c.objLabel}</span>
+    </div>
+    <div class="card-body">
+      <p class="oneliner">Virtual doors on a device — every service listens on a numbered port so the OS knows which application gets each incoming packet.</p>
+      <div class="hook-box">IP address = the building. Port number = the flat inside. You need both to reach the right application on the right device.</div>
+      <div class="hook-label">TCP vs UDP — Obj 1.5</div>
+      ${tcpudpHtml}
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:#6b6b68;margin-bottom:2px;">
+        <span style="display:inline-block;width:56px;">Port</span>
+        <span style="display:inline-block;width:72px;">Protocol</span>
+        <span>Service · Exam note</span>
+      </div>
+      <div style="border-top:1px solid rgba(0,0,0,0.08);margin-bottom:4px;"></div>
+      ${groupsHtml}
+      <div class="trap-box" style="margin-top:8px;">
+        <div class="trap-label">⚠ Exam traps</div>
+        ${trapsHtml}
+      </div>
+      <div class="related-section">
+        <div class="related-label">Related cards</div>
+        <div class="related-cards">${relatedHtml}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showTopo() {
+  current = '__topo';
+  updateNav('__topo');
+  document.getElementById('mobileCardName').textContent = 'Network Map';
+  document.getElementById('main').innerHTML = `<div class="topo-page">
+  <div class="topo-title">Enterprise Network Topology</div>
+  <div class="topo-sub">The reference map all cards hang off. Click any device to open its card.</div>
+  <div class="topo-card">
+    <div style="padding:16px 20px;border-bottom:1px solid rgba(0,0,0,0.07)"><span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6b6b68">Topology — generic enterprise</span></div>
+    <div style="padding:16px 20px">
+<style>
+@keyframes tp-dn{0%,100%{opacity:0;transform:translateY(0)}8%{opacity:1}35%{opacity:1;transform:translateY(30px)}37%{opacity:0}}
+@keyframes tp-up{0%,40%,100%{opacity:0;transform:translateY(0)}48%{opacity:1}78%{opacity:1;transform:translateY(-30px)}80%{opacity:0}}
+@keyframes tp-wifi{0%,100%{opacity:0;r:4}15%{opacity:.7;r:20}30%{opacity:0;r:36}}
+</style>
+<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#fafaf8;border-radius:8px">
+  <ellipse cx="320" cy="34" rx="76" ry="22" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.5"/>
+  <text x="320" y="30" text-anchor="middle" font-size="10" fill="#5F5E5A" font-weight="600">Internet</text>
+  <text x="320" y="43" text-anchor="middle" font-size="8" fill="#888780">ISP uplink</text>
+  <line x1="320" y1="56" x2="320" y2="82" stroke="#D3D1C7" stroke-width="1.4" stroke-dasharray="5,3"/>
+  <rect x="252" y="82" width="136" height="44" rx="9" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.8" onclick="showCard('router')" style="cursor:pointer"/>
+  <text x="320" y="101" text-anchor="middle" font-size="11" fill="#854F0B" font-weight="700">ROUTER</text>
+  <text x="320" y="116" text-anchor="middle" font-size="8" fill="#BA7517">Layer 3 · routing table · default gateway</text>
+  <line x1="320" y1="126" x2="320" y2="152" stroke="#D3D1C7" stroke-width="1.4"/>
+  <rect x="250" y="152" width="140" height="44" rx="9" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1.8" onclick="showCard('firewall')" style="cursor:pointer"/>
+  <text x="320" y="171" text-anchor="middle" font-size="11" fill="#A32D2D" font-weight="700">FIREWALL</text>
+  <text x="320" y="186" text-anchor="middle" font-size="8" fill="#791F1F">ACL rules · stateful inspection · permit/deny</text>
+  <line x1="320" y1="196" x2="320" y2="222" stroke="#D3D1C7" stroke-width="1.4"/>
+  <rect x="238" y="222" width="164" height="38" rx="8" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1.8" onclick="showCard('switch')" style="cursor:pointer"/>
+  <text x="320" y="239" text-anchor="middle" font-size="10" fill="#993C1D" font-weight="700">CORE SWITCH</text>
+  <text x="320" y="253" text-anchor="middle" font-size="8" fill="#D85A30">Layer 2 · CAM table · VLANs</text>
+  <line x1="278" y1="260" x2="128" y2="294" stroke="#D3D1C7" stroke-width="1.3"/>
+  <line x1="320" y1="260" x2="320" y2="294" stroke="#D3D1C7" stroke-width="1.3"/>
+  <line x1="362" y1="260" x2="512" y2="294" stroke="#D3D1C7" stroke-width="1.3"/>
+  <rect x="56" y="294" width="144" height="34" rx="7" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1.5" onclick="showCard('switch')" style="cursor:pointer"/>
+  <text x="128" y="309" text-anchor="middle" font-size="9" fill="#993C1D" font-weight="600">Access Switch A</text>
+  <text x="128" y="321" text-anchor="middle" font-size="8" fill="#D85A30">floor / dept A</text>
+  <rect x="248" y="294" width="144" height="34" rx="7" fill="#FAEEDA" stroke="#FAC775" stroke-width="1.5" onclick="showCard('wap')" style="cursor:pointer"/>
+  <text x="320" y="309" text-anchor="middle" font-size="9" fill="#854F0B" font-weight="600">WAP</text>
+  <text x="320" y="321" text-anchor="middle" font-size="8" fill="#BA7517">wireless · SSID · 802.11</text>
+  <rect x="440" y="294" width="144" height="34" rx="7" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1.5" onclick="showCard('switch')" style="cursor:pointer"/>
+  <text x="512" y="309" text-anchor="middle" font-size="9" fill="#993C1D" font-weight="600">Access Switch B</text>
+  <text x="512" y="321" text-anchor="middle" font-size="8" fill="#D85A30">floor / dept B</text>
+  <line x1="96" y1="328" x2="72" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <line x1="128" y1="328" x2="128" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <line x1="160" y1="328" x2="184" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <rect x="44" y="356" width="52" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="70" y="371" text-anchor="middle" font-size="8" fill="#185FA5">PC</text>
+  <rect x="102" y="356" width="52" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="128" y="371" text-anchor="middle" font-size="8" fill="#185FA5">PC</text>
+  <rect x="158" y="356" width="52" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="184" y="371" text-anchor="middle" font-size="8" fill="#185FA5">Server</text>
+  <circle cx="284" cy="352" r="4" fill="none" stroke="#FAC775" stroke-width="1" style="animation:tp-wifi 2.2s ease-out infinite"/>
+  <circle cx="284" cy="352" r="4" fill="none" stroke="#FAC775" stroke-width=".6" style="animation:tp-wifi 2.2s ease-out infinite .6s"/>
+  <rect x="260" y="358" width="48" height="20" rx="4" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/><text x="284" y="372" text-anchor="middle" font-size="8" fill="#854F0B">📱 WiFi</text>
+  <circle cx="356" cy="352" r="4" fill="none" stroke="#FAC775" stroke-width="1" style="animation:tp-wifi 2.2s ease-out infinite .4s"/>
+  <rect x="332" y="358" width="48" height="20" rx="4" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/><text x="356" y="372" text-anchor="middle" font-size="8" fill="#854F0B">💻 WiFi</text>
+  <line x1="480" y1="328" x2="456" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <line x1="512" y1="328" x2="512" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <line x1="544" y1="328" x2="568" y2="356" stroke="#D3D1C7" stroke-width="1.1"/>
+  <rect x="430" y="356" width="52" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="456" y="371" text-anchor="middle" font-size="8" fill="#185FA5">PC</text>
+  <rect x="486" y="356" width="52" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="512" y="371" text-anchor="middle" font-size="8" fill="#185FA5">PC</text>
+  <rect x="542" y="356" width="56" height="22" rx="4" fill="#E6F1FB" stroke="#B5D4F4" stroke-width="1"/><text x="570" y="371" text-anchor="middle" font-size="8" fill="#185FA5">Printer</text>
+  <g style="animation:tp-dn 4s ease-in-out infinite"><rect x="310" y="58" width="20" height="10" rx="2" fill="#EF9F27"/><text x="320" y="66" text-anchor="middle" font-size="6.5" fill="#fff" font-weight="600">data</text></g>
+  <g style="animation:tp-up 4s ease-in-out infinite"><rect x="332" y="126" width="20" height="10" rx="2" fill="#1D9E75"/><text x="342" y="134" text-anchor="middle" font-size="6.5" fill="#fff" font-weight="600">resp</text></g>
+  <rect x="8" y="8" width="226" height="68" rx="6" fill="#fff" stroke="#D3D1C7" stroke-width="1"/>
+  <text x="18" y="24" font-size="9" fill="#5F5E5A" font-weight="600">Click any device to open its card</text>
+  <rect x="18" y="32" width="10" height="10" rx="2" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+  <text x="34" y="41" font-size="8" fill="#854F0B">Router — Layer 3 · routes between networks</text>
+  <rect x="18" y="46" width="10" height="10" rx="2" fill="#FCEBEB" stroke="#F7C1C1" stroke-width="1"/>
+  <text x="34" y="55" font-size="8" fill="#A32D2D">Firewall — inspects · allows · blocks</text>
+  <rect x="18" y="60" width="10" height="10" rx="2" fill="#FAECE7" stroke="#F5C4B3" stroke-width="1"/>
+  <text x="34" y="69" font-size="8" fill="#993C1D">Switch — Layer 2 · local delivery</text>
+</svg>
+    </div>
+  </div>
+  <div class="topo-card">
+    <div style="padding:14px 20px;border-bottom:1px solid rgba(0,0,0,0.07)"><span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6b6b68">Traffic flow — internet request</span></div>
+    <div style="padding:14px 20px;font-size:13px;color:#1a1a18;line-height:1.85">
+      PC → Access Switch (L2 to uplink) → Core Switch (L2 to firewall port) → Firewall (ACL check) → Router (L3 routing decision) → ISP → Internet → Server.<br><br>
+      <strong style="color:#A32D2D">Every device plays exactly one role.</strong> The switch never routes. The router never filters. The firewall never switches. In enterprise, separation of function is the rule — each device is optimised for its single job.
+    </div>
+  </div>
+</div>`;
+  closeSidebar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateNav(id) {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.id === id) btn.classList.add('active');
+  });
+}
+
+function filterNav(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.nav-btn[data-id]').forEach(btn => {
+    const id = btn.dataset.id;
+    if (id === '__topo') { btn.classList.toggle('hidden', q && !'network map'.includes(q)); return; }
+    const card = CARDS[id];
+    const text = btn.textContent.toLowerCase();
+    const terms = card ? (card.terms||[]).map(t=>t.label.toLowerCase()).join(' ') : '';
+    const name = card ? card.name.toLowerCase() : '';
+    btn.classList.toggle('hidden', !!(q && !text.includes(q) && !terms.includes(q) && !name.includes(q)));
+  });
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('visible');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+let current = '__topo';
+showTopo();
+</script>
+</body>
+</html>
